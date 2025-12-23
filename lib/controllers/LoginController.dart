@@ -1,6 +1,9 @@
 import '../../helpers/ExportImports.dart';
 
 class LoginController extends GetxController {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   // Form fields
   var email = ''.obs;
   var password = ''.obs;
@@ -20,7 +23,7 @@ class LoginController extends GetxController {
 
   bool validate() {
     bool valid = true;
-
+print("email2: " + email.value);
     if (email.value.isEmpty || !GetUtils.isEmail(email.value)) {
       emailError.value = 'Please enter a valid email';
       valid = false;
@@ -40,31 +43,55 @@ class LoginController extends GetxController {
 
   Future<void> login() async {
     if (!validate()) return;
+    emailError.value = '';
+    passwordError.value = '';
 
-    try {
-      isLoading.value = true;
+    isLoading.value = true;
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+    final user = await ApiService.login(
+      email: email.value,
+      password: password.value,
+    );
 
-      // On success → navigate to dashboard (replace with your actual screen)
-      Get.offAllNamed('/dashboard'); // or Get.to(() => DashboardScreen());
+    isLoading.value = false;
 
+    if (user != null) {
       Get.snackbar(
         'Success',
-        'Welcome to Grail Studios!',
-        backgroundColor: Colors.green.withOpacity(0.8),
+        user.message,
+        backgroundColor: grailGold,
         colorText: Colors.white,
       );
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Login failed. Please try again.',
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoading.value = false;
+      resetForm();
+
+      // Navigate based on role or onboarded status
+      // if (user.user.role == 'admin') {
+      //   Get.offAllNamed('/dashboard'); // or your admin home
+      // } else {
+      //   Get.offAllNamed('/home');
+      // }
     }
   }
+
+
+  void resetForm() {
+    email.value = '';
+    password.value = '';
+    emailError.value = '';
+    passwordError.value = '';
+    isLoading.value = false;
+    isPasswordVisible.value = false;
+
+    // 🔥 THIS is what clears the UI
+    emailController.clear();
+    passwordController.clear();
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
+  }
+
 }

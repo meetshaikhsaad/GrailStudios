@@ -36,3 +36,7 @@ const Color grailPrimaryOrange = Color(0xFFD98E2D); // Main button / accent (adj
 const Color grailTextDark = Color(0xFF3F2A12); // Dark brown for text
 const Color grailInputFill = Color(0xFFFFF8F0); // Very light fill for inputs
 const Color grailInputBorder = Color(0xFFE0D0B8); // Subtle border
+
+// for snackbar consistency
+const Color grailErrorRed = Color(0xFFE74C3C); // For error snackbars
+const Color grailSuccessGreen = Color(0xFF2ECC71); // For success snackbars

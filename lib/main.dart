@@ -1,6 +1,7 @@
 import '../../helpers/ExportImports.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
