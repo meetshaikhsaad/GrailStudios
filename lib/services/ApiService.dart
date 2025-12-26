@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../../helpers/ExportImports.dart'; // Make sure this includes your User model
+import '../../helpers/ExportImports.dart' hide Response; // Make sure this includes your User model
 
 class ApiService {
   static const String _baseUrl = AppConstants.SERVER_URL;
@@ -29,17 +29,17 @@ class ApiService {
     await prefs.setBool(AppConstants.IS_ONBOARDED, user['is_onboarded'] ?? false);
   }
 
-  static Future<User?> getSavedUser() async {
+  static Future<ActiveUser?> getSavedUser() async {
     final prefs = await SharedPreferences.getInstance();
 
     final token = prefs.getString(AppConstants.ACCESS_TOKEN);
     if (token == null || token.isEmpty) return null;
 
-    return User(
+    return ActiveUser(
       message: 'Saved user',
       accessToken: token,
       refreshToken: prefs.getString(AppConstants.REFRESH_TOKEN) ?? '',
-      user: UserClass(
+      user: ActiveUserClass(
         id: prefs.getInt(AppConstants.USER_ID) ?? 0,
         email: prefs.getString(AppConstants.USER_EMAIL) ?? '',
         username: prefs.getString(AppConstants.USER_USERNAME) ?? '',
@@ -67,7 +67,7 @@ class ApiService {
   }
 
   // ── LOGIN API ──
-  static Future<User?> login({
+  static Future<ActiveUser?> login({
     required String email,
     required String password,
   }) async {
@@ -97,7 +97,7 @@ class ApiService {
         await saveTokensAndUser(data);
 
         // Return parsed User model
-        return User.fromJson(data);
+        return ActiveUser.fromJson(data);
       }
 
       else {
@@ -298,6 +298,131 @@ class ApiService {
       colorText: Colors.white,
       duration: const Duration(seconds: 5),
     );
+  }
+
+  Future<dynamic> callApiWithMap(
+      String api,
+      String requestType, {
+        Map<String, dynamic>? queryParams,
+        required Map<String, dynamic> mapData,
+        bool getConversation = false,
+      }) async {
+    Dio dio = Dio();
+    // String url = '$_baseUrl$_endPoint$api';
+    String url = '$_baseUrl$api';
+
+    try {
+      // Add authorization header if token exists
+      String authHeader = await getAccessToken();
+      if (authHeader.isNotEmpty) {
+        dio.options.headers['Authorization'] = authHeader;
+      }
+
+      dio.options.connectTimeout = const Duration(seconds: 30);
+      dio.options.receiveTimeout = const Duration(seconds: 30);
+
+      Response response;
+
+      switch (requestType.toUpperCase()) {
+        case 'GET':
+          response = await dio.get(url, queryParameters: queryParams);
+          break;
+        case 'POST':
+          response = await dio.post(url, data: mapData);
+          break;
+        case 'PUT':
+          response = await dio.put(url, data: mapData);
+          break;
+        case 'DELETE':
+          response = await dio.delete(url, data: mapData);
+          break;
+        default:
+          throw Exception('Unsupported HTTP method: $requestType');
+      }
+
+      // Success: 200 or 201
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data;
+      }
+
+      // Server responded with error status
+      _handleApiError(response, getConversation: getConversation);
+      return null;
+
+    } on DioException catch (e) {
+      return _handleDioError(e, getConversation: getConversation);
+    } catch (e) {
+      Get.snackbar(
+        'Unexpected Error',
+        'Something went wrong. Please try again.',
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+      return null;
+    }
+  }
+
+// Helper: Handle HTTP error responses (4xx, 5xx)
+  void _handleApiError(Response response, {bool getConversation = false}) {
+    final statusCode = response.statusCode;
+
+    if (statusCode == 401) {
+      // Token expired or invalid — logout user
+      // SettingsController().logoutUser().then((_) {
+      //   Get.offAll(() => const LoginScreen());
+      // });
+      Get.snackbar(
+        'Session Expired',
+        'Please login again.',
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    String message = 'Request failed';
+    if (response.data is Map && response.data.containsKey('message')) {
+      message = response.data['message'];
+    } else if (response.data is Map && response.data.containsKey('detail')) {
+      message = response.data['detail'];
+    }
+
+    if (!getConversation) {
+      Get.snackbar(
+        'Error',
+        message,
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+// Helper: Handle Dio exceptions (network, timeout, etc.)
+  dynamic _handleDioError(DioException e, {bool getConversation = false}) {
+    if (e.response != null) {
+      _handleApiError(e.response!, getConversation: getConversation);
+      return null;
+    }
+
+    String message = 'No internet connection';
+
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+      message = 'Connection timeout. Please try again.';
+    } else if (e.type == DioExceptionType.badResponse) {
+      message = 'Received invalid response from server.';
+    }
+
+    if (!getConversation) {
+      Get.snackbar(
+        'Network Error',
+        message,
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+    }
+
+    return null;
   }
 
 }

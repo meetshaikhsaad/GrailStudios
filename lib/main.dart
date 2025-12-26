@@ -59,7 +59,10 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      // initialRoute: AppRoutes.dashboard,
+      initialRoute: AppRoutes.login,
+      getPages: AppPages.pages,
+      unknownRoute: GetPage(name: '/notfound', page: () => const Scaffold(body: Center(child: Text('Page Not Found')))),
     );
   }
 }
