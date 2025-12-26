@@ -32,3 +32,4 @@ export 'package:grailstudios/controllers/ForgotPasswordController.dart';
 export 'package:grailstudios/views/screens/SplashScreen.dart';
 export 'package:grailstudios/views/screens/LoginScreen.dart';
 export 'package:grailstudios/views/screens/ForgotPasswordScreen.dart';
+export 'package:grailstudios/views/screens/DashboardScreen.dart';
