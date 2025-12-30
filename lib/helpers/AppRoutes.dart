@@ -9,6 +9,8 @@ class AppRoutes {
   static const String compliance = '/compliance';
   static const String reports = '/reports';
   static const String settings = '/settings';
+  static const String addUser = '/addUser';
+  static const String userDetail = '/userDetail';
 }
 
 class AppPages {
@@ -16,6 +18,8 @@ class AppPages {
     GetPage(name: AppRoutes.login, page: () => const LoginScreen()),
     GetPage(name: AppRoutes.dashboard, page: () => const DashboardScreen()),
     GetPage(name: AppRoutes.usersRoles, page: () => const UsersRolesScreen()),
+    GetPage(name: AppRoutes.addUser, page: () => const AddUserScreen()),
+    GetPage(name: AppRoutes.userDetail, page: () => const UserDetailScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),
     // GetPage(name: AppRoutes.compliance, page: () => const ComplianceScreen()),

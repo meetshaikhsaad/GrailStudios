@@ -1,4 +1,3 @@
-import 'dart:ui';
 import '../../helpers/ExportImports.dart';
 
 class UsersRolesScreen extends StatelessWidget {
@@ -16,6 +15,16 @@ class UsersRolesScreen extends StatelessWidget {
         scaffoldKey: scaffoldKey
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
+
+      floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(),
+        backgroundColor: grailGold,
+        onPressed: () {
+          Get.toNamed(AppRoutes.addUser);
+        },
+        child: const Icon(Icons.person_add_alt_1, color: Colors.white),
+      ),
+
       body: Column(
         children: [
           // Search Bar (STATIC)
@@ -43,9 +52,9 @@ class UsersRolesScreen extends StatelessWidget {
             child: Row(
               children: [
                 _filterChip('All', true, () {}),
-                // _filterChip('Managers 12', false, () {}),
-                // _filterChip('Models 40', false, () {}),
-                // _filterChip('Team 112', false, () {}),
+                _filterChip('Managers 12', false, () {}),
+                _filterChip('Models 40', false, () {}),
+                _filterChip('Team 112', false, () {}),
               ],
             ),
           ),
@@ -132,8 +141,7 @@ class UsersRolesScreen extends StatelessWidget {
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 18),
                       onTap: () {
-                        // Navigate to user detail
-                        // Get.to(() => UserDetailScreen(user: user));
+                        Get.toNamed(AppRoutes.userDetail, arguments: {'userId': user.id, 'userFullName': user.fullName});
                       },
                     ),
                   );

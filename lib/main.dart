@@ -1,12 +1,15 @@
 import '../../helpers/ExportImports.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  final initialRoute = await ApiService.resolveInitialRoute();
+  runApp(MyApp(initialRoute: initialRoute));
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +63,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // initialRoute: AppRoutes.dashboard,
-      initialRoute: AppRoutes.login,
+      initialRoute: initialRoute,
       getPages: AppPages.pages,
       unknownRoute: GetPage(name: '/notfound', page: () => const Scaffold(body: Center(child: Text('Page Not Found')))),
     );
   }
 }
+

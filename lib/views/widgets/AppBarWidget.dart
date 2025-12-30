@@ -100,6 +100,8 @@ class AppBarWidget {
     required String title,
     required GlobalKey<ScaffoldState> scaffoldKey,
     int notificationCount = 3,
+    bool notificationVisibility = true,
+    bool showBackButton = false, // ← New parameter
   }) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(85),
@@ -108,44 +110,53 @@ class AppBarWidget {
         child: AppBar(
           backgroundColor: grailGold,
           elevation: 0,
-          leading: IconButton(
+          automaticallyImplyLeading: false, // Important: prevents default back button
+          leading: showBackButton
+              ? IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+            onPressed: () => Get.back(),
+          )
+              : IconButton(
             icon: const Icon(Icons.menu, color: Colors.white, size: 28),
             onPressed: () => scaffoldKey.currentState?.openDrawer(),
           ),
-          title: Text(
-            title,
-            style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              title,
+              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+            ),
           ),
           centerTitle: true,
           actions: [
-            Stack(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.notifications_none, color: Colors.white, size: 28),
-                  onPressed: () {},
-                ),
-                if (notificationCount > 0)
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-                      child: Text(
-                        notificationCount.toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 10),
+            if (notificationVisibility)
+              Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_none, color: Colors.white, size: 28),
+                    onPressed: () {},
+                  ),
+                  if (notificationCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                        child: Text(
+                          notificationCount.toString(),
+                          style: const TextStyle(color: Colors.white, fontSize: 10),
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-            const SizedBox(width: 10),
+                ],
+              ),
+            if (notificationVisibility) const SizedBox(width: 10),
           ],
         ),
       ),
     );
   }
-
 }
 
 
@@ -159,26 +170,26 @@ class AppBarWaveClipper extends CustomClipper<Path> {
     // Top-left to top-right (full top edge)
     path.moveTo(0, 0);
     path.lineTo(size.width, 0);
-    //
-    // // Bottom-right inverted corner (concave — creates rise on right)
+
+    // Bottom-right inverted corner (concave — creates rise on right)
     path.lineTo(size.width, size.height-(r*2));
     path.arcToPoint(
       Offset(size.width - r, size.height-(r)),
       radius: Radius.circular(r),
       clockwise: true, // Inverted curve
     );
-    //
-    // // Straight across bottom to left
+
+    // Straight across bottom to left
     path.lineTo(r, size.height - r);
-    //
-    // // Bottom-left normal convex corner
+
+    // Bottom-left normal convex corner
     path.arcToPoint(
       Offset(0, size.height),
       radius: Radius.circular(r),
       clockwise: false,
     );
-    //
-    // // Back to start
+
+    // Back to start
     path.lineTo(0, 0);
 
     path.close();

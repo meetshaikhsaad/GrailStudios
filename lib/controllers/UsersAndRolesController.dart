@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import '../../helpers/ExportImports.dart'; // Includes ApiService, grailErrorRed, etc.
 
 class UsersAndRolesController extends GetxController {
@@ -33,11 +32,12 @@ class UsersAndRolesController extends GetxController {
 
     try {
       final response = await ApiService().callApiWithMap(
-        '/users/',
+        'users/',
         'Get',
         queryParams: {
           'skip': skip.toString(),
           'limit': limit.toString(),
+          'role': "admin",
         },
         mapData: {}, // Not needed for GET
       );

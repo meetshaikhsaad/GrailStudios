@@ -30,6 +30,8 @@ export 'package:grailstudios/models/User.dart';
 export 'package:grailstudios/controllers/LoginController.dart';
 export 'package:grailstudios/controllers/ForgotPasswordController.dart';
 export 'package:grailstudios/controllers/UsersAndRolesController.dart';
+export 'package:grailstudios/controllers/AddUserController.dart';
+export 'package:grailstudios/controllers/UserDetailController.dart';
 
 
 //Screens
@@ -38,3 +40,5 @@ export 'package:grailstudios/views/screens/LoginScreen.dart';
 export 'package:grailstudios/views/screens/ForgotPasswordScreen.dart';
 export 'package:grailstudios/views/screens/DashboardScreen.dart';
 export 'package:grailstudios/views/screens/UserRolesScreen.dart';
+export 'package:grailstudios/views/screens/AddUserScreen.dart';
+export 'package:grailstudios/views/screens/UserDetailScreen.dart';

@@ -65,13 +65,6 @@ print("email2: " + email.value);
       resetForm();
 
       Get.offAll(() => const DashboardScreen());
-
-      // Navigate based on role or onboarded status
-      // if (user.user.role == 'admin') {
-      //   Get.offAllNamed('/dashboard'); // or your admin home
-      // } else {
-      //   Get.offAllNamed('/home');
-      // }
     }
   }
 
@@ -83,8 +76,6 @@ print("email2: " + email.value);
     passwordError.value = '';
     isLoading.value = false;
     isPasswordVisible.value = false;
-
-    // 🔥 THIS is what clears the UI
     emailController.clear();
     passwordController.clear();
   }

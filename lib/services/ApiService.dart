@@ -7,6 +7,70 @@ class ApiService {
 
   static String get bearerPrefix => 'Bearer ';
 
+  static Future<String> resolveInitialRoute() async {
+    final prefs = await SharedPreferences.getInstance();
+    final refreshToken = prefs.getString(AppConstants.REFRESH_TOKEN);
+
+    if (refreshToken == null || refreshToken.isEmpty) {
+      return AppRoutes.login;
+    }
+
+    final refreshed = await refreshAccessToken();
+
+    if (refreshed) {
+      return AppRoutes.dashboard;
+    }
+
+    await clearUserData();
+    return AppRoutes.login;
+  }
+
+
+  static Future<bool> refreshAccessToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final refreshToken = prefs.getString(AppConstants.REFRESH_TOKEN);
+      print('Attempting to refresh access token with refresh token: $refreshToken');
+
+      if (refreshToken == null || refreshToken.isEmpty) {
+        return false;
+      }
+
+      final dio = Dio();
+      final url = '$_baseUrl${_endPoint}auth/refresh';
+
+      final response = await dio.post(
+        url,
+        data: {
+          'refresh_token': refreshToken, // MUST be a Map
+        },
+        options: Options(
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final newAccessToken = response.data['access_token'];
+        print('New access token received: $newAccessToken');
+
+        await prefs.setString(
+          AppConstants.ACCESS_TOKEN,
+          newAccessToken,
+        );
+
+        return true;
+      }
+
+      return false;
+    } on DioException {
+      return false;
+    }
+  }
+
+
   static Future<String> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppConstants.ACCESS_TOKEN) ?? '';
@@ -15,7 +79,8 @@ class ApiService {
 
   static Future<void> saveTokensAndUser(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();
-
+    print('access token: ${data['access_token']}');
+    print('refresh token: ${data['refresh_token']}');
     await prefs.setString(AppConstants.ACCESS_TOKEN, data['access_token'] ?? '');
     await prefs.setString(AppConstants.REFRESH_TOKEN, data['refresh_token'] ?? '');
 
@@ -305,11 +370,11 @@ class ApiService {
       String requestType, {
         Map<String, dynamic>? queryParams,
         required Map<String, dynamic> mapData,
-        bool getConversation = false,
+        bool getSnakcbar = true,
       }) async {
     Dio dio = Dio();
     // String url = '$_baseUrl$_endPoint$api';
-    String url = '$_baseUrl$api';
+    String url = '$_baseUrl$_endPoint$api';
 
     try {
       // Add authorization header if token exists
@@ -346,11 +411,11 @@ class ApiService {
       }
 
       // Server responded with error status
-      _handleApiError(response, getConversation: getConversation);
+      _handleApiError(response, getSnakcbar: getSnakcbar);
       return null;
 
     } on DioException catch (e) {
-      return _handleDioError(e, getConversation: getConversation);
+      return _handleDioError(e, getSnakcbar: getSnakcbar);
     } catch (e) {
       Get.snackbar(
         'Unexpected Error',
@@ -363,14 +428,10 @@ class ApiService {
   }
 
 // Helper: Handle HTTP error responses (4xx, 5xx)
-  void _handleApiError(Response response, {bool getConversation = false}) {
+  void _handleApiError(Response response, {bool getSnakcbar = true}) {
     final statusCode = response.statusCode;
 
     if (statusCode == 401) {
-      // Token expired or invalid — logout user
-      // SettingsController().logoutUser().then((_) {
-      //   Get.offAll(() => const LoginScreen());
-      // });
       Get.snackbar(
         'Session Expired',
         'Please login again.',
@@ -387,7 +448,7 @@ class ApiService {
       message = response.data['detail'];
     }
 
-    if (!getConversation) {
+    if (getSnakcbar) {
       Get.snackbar(
         'Error',
         message,
@@ -398,9 +459,9 @@ class ApiService {
   }
 
 // Helper: Handle Dio exceptions (network, timeout, etc.)
-  dynamic _handleDioError(DioException e, {bool getConversation = false}) {
+  dynamic _handleDioError(DioException e, {bool getSnakcbar = true}) {
     if (e.response != null) {
-      _handleApiError(e.response!, getConversation: getConversation);
+      _handleApiError(e.response!, getSnakcbar: getSnakcbar);
       return null;
     }
 
@@ -413,7 +474,7 @@ class ApiService {
       message = 'Received invalid response from server.';
     }
 
-    if (!getConversation) {
+    if (getSnakcbar) {
       Get.snackbar(
         'Network Error',
         message,
