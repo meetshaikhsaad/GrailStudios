@@ -92,6 +92,7 @@ class ApiService {
     await prefs.setString(AppConstants.USER_EMAIL, user['email'] ?? '');
     await prefs.setString(AppConstants.USER_ROLE, user['role'] ?? '');
     await prefs.setBool(AppConstants.IS_ONBOARDED, user['is_onboarded'] ?? false);
+    await prefs.setString(AppConstants.PROFILE_PICTURE_URL, user['profile_picture_url'] ?? '');
   }
 
   static Future<ActiveUser?> getSavedUser() async {
@@ -111,6 +112,7 @@ class ApiService {
         fullName: prefs.getString(AppConstants.USER_FULLNAME) ?? '',
         role: prefs.getString(AppConstants.USER_ROLE) ?? '',
         isOnboarded: prefs.getBool(AppConstants.IS_ONBOARDED) ?? false,
+        profilePictureUrl: prefs.getString(AppConstants.PROFILE_PICTURE_URL) ?? '',
         timezone: null,
         phone: null,
         gender: null,

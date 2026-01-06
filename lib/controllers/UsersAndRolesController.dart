@@ -37,7 +37,7 @@ class UsersAndRolesController extends GetxController {
         queryParams: {
           'skip': skip.toString(),
           'limit': limit.toString(),
-          'role': "admin",
+          'role': "",
         },
         mapData: {}, // Not needed for GET
       );

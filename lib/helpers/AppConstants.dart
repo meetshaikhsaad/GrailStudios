@@ -8,4 +8,5 @@ class AppConstants {
   static const String USER_EMAIL = 'USER_EMAIL';
   static const String USER_ROLE = 'USER_ROLE';
   static const String IS_ONBOARDED = 'IS_ONBOARDED';
+  static const String PROFILE_PICTURE_URL = 'PROFILE_PICTURE_URL';
 }

@@ -11,10 +11,10 @@ class UserDetailScreen extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBarWidget.appBarWave(
-        title: Get.arguments['userFullName'], // Safe fallback
+        title: Get.arguments['userFullName'],
         scaffoldKey: scaffoldKey,
         notificationVisibility: false,
-          showBackButton: true,
+        showBackButton: true,
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
       backgroundColor: Colors.white,
@@ -24,64 +24,89 @@ class UserDetailScreen extends StatelessWidget {
         }
 
         if (controller.hasError.value) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error, color: Colors.red, size: 64),
-                const SizedBox(height: 16),
-                Text('Error: ${controller.errorMessage.value}'),
-                ElevatedButton(onPressed: controller.fetchUserDetail, child: const Text('Retry')),
-              ],
-            ),
-          );
+          return Center(child: Text('Error: ${controller.errorMessage.value}'));
         }
 
         final user = controller.user.value!;
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
               Center(
                 child: CircleAvatar(
-                  // backgroundColor: Colors.transparent,
                   radius: 60,
                   backgroundImage: user.profilePictureUrl != null && user.profilePictureUrl!.isNotEmpty
                       ? NetworkImage(user.profilePictureUrl!)
-                      : const AssetImage('assets/images/splash_person1.png') as ImageProvider,
+                      : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                 ),
               ),
               const SizedBox(height: 30),
 
-              _infoCard(Icons.person, 'Name', user.fullName),
+              // Uneditable: Name
+              _infoCard(Icons.person, 'Name', user.fullName, editable: false),
+
               const SizedBox(height: 16),
-              _infoCard(Icons.email, 'Email', user.email),
+
+              // Uneditable: Email
+              _infoCard(Icons.email, 'Email', user.email, editable: false),
+
               const SizedBox(height: 16),
-              _infoCard(Icons.verified_user, 'Role', _capitalize(user.role)),
+
+              // Role
+              _infoCard(Icons.verified_user, 'Role', _capitalize(user.role), editable: false),
 
               const SizedBox(height: 30),
 
-              // Container(
-              //   width: double.infinity,
-              //   padding: const EdgeInsets.all(20),
-              //   decoration: BoxDecoration(
-              //     color: Colors.red[50],
-              //     borderRadius: BorderRadius.circular(16),
-              //     border: Border.all(color: Colors.red[200]!),
-              //   ),
-              //   child: const Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text('Tasks: 7/12 (5 missed tasks)', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-              //       SizedBox(height: 8),
-              //       Text('NDA - Expired', style: TextStyle(color: Colors.red)),
-              //       SizedBox(height: 8),
-              //       Text('Content - Pending', style: TextStyle(color: Colors.red)),
-              //     ],
-              //   ),
-              // ),
+              // Editable Fields
+              TextField(
+                controller: controller.phoneController,
+                decoration: _inputDecoration('Phone'),
+              ),
+              const SizedBox(height: 20),
 
-              const SizedBox(height: 50),
+              TextField(
+                controller: controller.bioController,
+                maxLines: 4,
+                decoration: _inputDecoration('Bio'),
+              ),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: controller.address1Controller,
+                decoration: _inputDecoration('Address Line 1'),
+              ),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: controller.cityController,
+                decoration: _inputDecoration('City'),
+              ),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: controller.zipcodeController,
+                decoration: _inputDecoration('ZIP Code'),
+              ),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: controller.xLinkController,
+                decoration: _inputDecoration('X (Twitter) Link'),
+              ),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: controller.ofLinkController,
+                decoration: _inputDecoration('OnlyFans Link'),
+              ),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: controller.instaLinkController,
+                decoration: _inputDecoration('Instagram Link'),
+              ),
+              const SizedBox(height: 40),
 
               Row(
                 children: [
@@ -100,15 +125,13 @@ class UserDetailScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Get.to(() => EditUserScreen(user: user));
-                      },
+                      onPressed: controller.updateUser,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: grailGold,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       ),
-                      child: const Text('Edit User', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                      child: const Text('Update User', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                     ),
                   ),
                 ],
@@ -120,9 +143,22 @@ class UserDetailScreen extends StatelessWidget {
     );
   }
 
-  String _capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: const Color(0xFFF8F8F8),
+      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide.none,
+      ),
+    );
+  }
 
-  Widget _infoCard(IconData icon, String label, String value) {
+  String _capitalize(String s) => s.isEmpty ? '' : '${s[0].toUpperCase()}${s.substring(1)}';
+
+  Widget _infoCard(IconData icon, String label, String value, {bool editable = true}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),

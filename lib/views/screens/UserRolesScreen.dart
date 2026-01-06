@@ -11,7 +11,7 @@ class UsersRolesScreen extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBarWidget.appBarWave(
-        title: 'Users & Roles',
+        title: 'Users & Assign Users',
         scaffoldKey: scaffoldKey
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
@@ -141,6 +141,7 @@ class UsersRolesScreen extends StatelessWidget {
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 18),
                       onTap: () {
+                        print("user id: "+user.id.toString());
                         Get.toNamed(AppRoutes.userDetail, arguments: {'userId': user.id, 'userFullName': user.fullName});
                       },
                     ),
