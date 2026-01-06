@@ -34,11 +34,34 @@ class UserDetailScreen extends StatelessWidget {
           child: Column(
             children: [
               Center(
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundImage: user.profilePictureUrl != null && user.profilePictureUrl!.isNotEmpty
-                      ? NetworkImage(user.profilePictureUrl!)
-                      : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                child: GestureDetector(
+                  onTap: controller.pickProfilePicture,
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundImage: user.profilePictureUrl != null && user.profilePictureUrl!.isNotEmpty
+                            ? NetworkImage(user.profilePictureUrl!)
+                            : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                      ),
+                      Obx(() => controller.isUploadingImage.value
+                          ? Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                        child: const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        ),
+                      )
+                          : Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(color: grailGold, shape: BoxShape.circle),
+                        child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                      )),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 30),

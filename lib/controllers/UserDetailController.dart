@@ -1,8 +1,12 @@
 import '../../helpers/ExportImports.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class UserDetailController extends GetxController {
   var isLoading = true.obs;
   var isSaving = false.obs;
+  var isUploadingImage = false.obs;
   var hasError = false.obs;
   var errorMessage = ''.obs;
 
@@ -17,6 +21,9 @@ class UserDetailController extends GetxController {
   final xLinkController = TextEditingController();
   final ofLinkController = TextEditingController();
   final instaLinkController = TextEditingController();
+
+  final ImagePicker _picker = ImagePicker();
+  var pendingProfilePictureUrl = Rxn<String>();
 
   @override
   void onInit() {
@@ -132,6 +139,10 @@ class UserDetailController extends GetxController {
       "insta_link": instaLinkController.text.trim().isEmpty ? null : instaLinkController.text.trim(),
     };
 
+    if (pendingProfilePictureUrl.value != null) {
+      payload["profile_picture_url"] = pendingProfilePictureUrl.value;
+    }
+
     try {
       final response = await ApiService().callApiWithMap(
         'users/${user.value!.id}',
@@ -154,6 +165,101 @@ class UserDetailController extends GetxController {
       Get.snackbar('Error', 'Failed to update user', backgroundColor: grailErrorRed, colorText: Colors.white);
     } finally {
       isSaving.value = false;
+    }
+  }
+
+  // Upload Profile Picture
+  Future<void> pickProfilePicture() async {
+    await Get.bottomSheet(
+      Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Change Profile Picture', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: grailGold),
+              title: const Text('Open Camera'),
+              onTap: () => _pickAndUpload(ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: grailGold),
+              title: const Text('Open Gallery'),
+              onTap: () => _pickAndUpload(ImageSource.gallery),
+            ),
+            const SizedBox(height: 10),
+            ListTile(
+              title: const Center(child: Text('Cancel', style: TextStyle(color: Colors.red))),
+              onTap: () => Get.back(),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
+  Future<void> _pickAndUpload(ImageSource source) async {
+    Get.back(); // Close bottom sheet
+
+    final XFile? pickedFile = await _picker.pickImage(
+      source: source,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
+
+    if (pickedFile == null) return;
+
+    isUploadingImage.value = true;
+
+    try {
+      final String accessToken = await ApiService.getAccessToken();
+      if (accessToken.isEmpty) throw Exception('No auth token');
+
+      final uri = Uri.parse('${AppConstants.SERVER_URL}/api/upload/general-upload');
+      var request = http.MultipartRequest('POST', uri);
+
+      request.headers.addAll({
+        'Authorization': accessToken,
+        'Accept': 'application/json',
+      });
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          pickedFile.path,
+          contentType: MediaType('image', pickedFile.path.split('.').last),
+        ),
+      );
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final String newUrl = data['url'];
+
+        pendingProfilePictureUrl.value = newUrl;
+
+        Get.snackbar(
+          'Success',
+          'Image uploaded! Tap "Update User" to save changes.',
+          backgroundColor: grailGold,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar('Error', 'Upload failed: ${response.body}', backgroundColor: grailErrorRed);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to upload image', backgroundColor: grailErrorRed);
+    } finally {
+      isUploadingImage.value = false;
     }
   }
 }

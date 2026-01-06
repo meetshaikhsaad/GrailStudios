@@ -71,7 +71,15 @@ class AppBarWidget {
                           ],
                         ),
                       ),
-                      Icon(Icons.edit, size: 18, color: Colors.green),
+                      IconButton(
+                        icon: Icon(Icons.edit, size: 18, color: Colors.green),
+                        onPressed: () {
+                          scaffoldKey.currentState?.closeDrawer();
+                          // Get.toNamed(AppRoutes.profile);
+                          print("userid: "+user!.id.toString());
+                          Get.toNamed(AppRoutes.userDetail, arguments: {'userId': user?.id, 'userFullName': user?.fullName});
+                        },
+                      ),
                     ],
                   ),
                 ),
