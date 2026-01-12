@@ -31,11 +31,11 @@ class ActiveUserProfile {
 
   final RelatedUser? manager;
   final RelatedUser? assignedModelRel;
-  final List<dynamic> modelsUnderManager;
+  final List<dynamic>? modelsUnderManager;
 
   final String? phone;
   final String? mobileNumber;
-  final String profilePictureUrl;
+  final String? profilePictureUrl;
   final String? bio;
   final String? gender;
   final DateTime? dob;
@@ -62,10 +62,10 @@ class ActiveUserProfile {
     this.accountStatus,
     this.manager,
     this.assignedModelRel,
-    required this.modelsUnderManager,
+    this.modelsUnderManager,
     this.phone,
     this.mobileNumber,
-    required this.profilePictureUrl,
+    this.profilePictureUrl,
     this.bio,
     this.gender,
     this.dob,

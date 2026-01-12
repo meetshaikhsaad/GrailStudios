@@ -49,8 +49,8 @@ class AppBarWidget {
                     children: [
                       CircleAvatar(
                         radius: 28,
-                        backgroundImage: user?.profilePictureUrl != null && user!.profilePictureUrl.isNotEmpty
-                            ? NetworkImage(user.profilePictureUrl)
+                        backgroundImage: user?.profilePictureUrl != null && user!.profilePictureUrl!.isNotEmpty
+                            ? NetworkImage(user.profilePictureUrl!)
                             : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                       ),
                       const SizedBox(width: 12),

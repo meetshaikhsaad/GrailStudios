@@ -3,6 +3,11 @@ import '../../helpers/ExportImports.dart';
 class UsersRolesScreen extends StatelessWidget {
   const UsersRolesScreen({super.key});
 
+  Future<String> _getLoggedInUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(AppConstants.USER_ROLE) ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final UsersAndRolesController controller = Get.put(UsersAndRolesController());
@@ -104,51 +109,76 @@ class UsersRolesScreen extends StatelessWidget {
             ),
           ),
 
-          // Filter Chips (STATIC)
-          Obx(() {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  _filterChip(
-                    'All',
-                    controller.selectedRole.value.isEmpty,
-                        () {
-                      controller.selectedRole.value = '';
-                      controller.refreshUsers();
-                    },
-                  ),
-                  _filterChip(
-                    'Admins',
-                    controller.selectedRole.value == 'admin',
-                        () {
-                      controller.selectedRole.value = 'admin';
-                      controller.refreshUsers();
-                    },
-                  ),
-                  _filterChip(
-                    'Managers',
-                    controller.selectedRole.value == 'manager',
-                        () {
-                      controller.selectedRole.value = 'manager';
-                      controller.refreshUsers();
-                    },
-                  ),
-                  _filterChip(
-                    'Models',
-                    controller.selectedRole.value == 'digital_creator',
-                        () {
-                      controller.selectedRole.value = 'digital_creator';
-                      controller.refreshUsers();
-                    },
-                  ),
-                ],
-              ),
-            );
-          }),
+          // Filter Chips
+          FutureBuilder<String>(
+            future: _getLoggedInUserRole(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const SizedBox();
 
+              final loggedInRole = snapshot.data;
 
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    // All
+                    Obx(() => _filterChip(
+                      'All',
+                      controller.selectedRole.value.isEmpty,
+                          () {
+                        controller.selectedRole.value = '';
+                        controller.refreshUsers();
+                      },
+                    )),
+
+                    // Admins (only if logged-in user is admin)
+                    if (loggedInRole == 'admin')
+                      Obx(() => _filterChip(
+                        'Admins',
+                        controller.selectedRole.value == 'admin',
+                            () {
+                          controller.selectedRole.value = 'admin';
+                          controller.refreshUsers();
+                        },
+                      )),
+
+                    // Managers
+                    if (loggedInRole == 'admin')
+                    Obx(() => _filterChip(
+                      'Managers',
+                      controller.selectedRole.value == 'manager',
+                          () {
+                        controller.selectedRole.value = 'manager';
+                        controller.refreshUsers();
+                      },
+                    )),
+
+                    if (loggedInRole == 'admin' || loggedInRole == 'manager' )
+                    Obx(() => _filterChip(
+                      'Team Members',
+                      controller.selectedRole.value == 'team_member',
+                          () {
+                        controller.selectedRole.value = 'team_member';
+                        controller.refreshUsers();
+                      },
+                    )),
+
+                    // Models
+                    if (loggedInRole == 'admin' || loggedInRole == 'manager' || loggedInRole == 'team_member')
+                    Obx(() => _filterChip(
+                      'Models',
+                      controller.selectedRole.value == 'digital_creator',
+                          () {
+                        controller.selectedRole.value = 'digital_creator';
+                        controller.refreshUsers();
+                      },
+                    )),
+                  ],
+                ),
+              );
+            },
+          ),
           const SizedBox(height: 10),
 
           // Users List (REACTIVE)
