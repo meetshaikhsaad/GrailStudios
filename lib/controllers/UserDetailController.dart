@@ -12,6 +12,12 @@ class UserDetailController extends GetxController {
 
   var user = Rxn<User>(); // Reactive, nullable User
 
+  var managers = <UserRelation>[].obs;
+  var availableModels = <UserRelation>[].obs;
+
+  var selectedManager = Rxn<UserRelation>();
+  var selectedModels = <UserRelation>[].obs;
+
   // Editable controllers
   final phoneController = TextEditingController();
   final bioController = TextEditingController();
@@ -59,6 +65,15 @@ class UserDetailController extends GetxController {
         xLinkController.text = user.value!.xLink ?? '';
         ofLinkController.text = user.value!.ofLink ?? '';
         instaLinkController.text = user.value!.instaLink ?? '';
+
+        // Fetch managers and models after user is loaded
+        if (user.value!.role == "digital_creator"){
+          await fetchManagers(includeAssigned: true);
+        };
+
+        if (user.value!.role == "manager"){
+          await fetchAvailableModels(includeAssigned: true);
+        };
 
       } else {
         throw Exception('Invalid response');
@@ -140,6 +155,12 @@ class UserDetailController extends GetxController {
       "x_link": xLinkController.text.trim().isEmpty ? null : xLinkController.text.trim(),
       "of_link": ofLinkController.text.trim().isEmpty ? null : ofLinkController.text.trim(),
       "insta_link": instaLinkController.text.trim().isEmpty ? null : instaLinkController.text.trim(),
+      "manager_id": selectedManager.value != null && selectedManager.value!.id != 0
+          ? selectedManager.value!.id
+          : null, // null if "No Manager"
+      "assign_model_ids": selectedModels.isNotEmpty
+          ? selectedModels.map((m) => m.id).toList()
+          : [], // empty array if none
     };
 
     if (pendingProfilePictureUrl.value != null) {
@@ -332,6 +353,71 @@ class UserDetailController extends GetxController {
     } finally {
       isSaving.value = false;
     }
+  }
+
+  /// Fetch managers and optionally append user's assigned manager
+  Future<void> fetchManagers({bool includeAssigned = false}) async {
+    try {
+      final response = await ApiService().callApiWithMap(
+        'users/available/managers',
+        'Get',
+        mapData: {},
+      );
+
+      if (response != null && response is List) {
+        final fetchedManagers = response.map((e) => UserRelation.fromJson(e)).toList();
+
+        // Include currently assigned manager if not already in the list
+        if (includeAssigned && user.value?.manager != null) {
+          final assigned = user.value!.manager!;
+          if (!fetchedManagers.any((m) => m.id == assigned.id)) {
+            fetchedManagers.insert(0, assigned); // Add at start
+          }
+          selectedManager.value = assigned; // select assigned
+        }
+        fetchedManagers.insert(
+          0,
+          UserRelation(id: 0, fullName: '-- No Manager --', role: 'none'),
+        );
+
+        managers.assignAll(fetchedManagers);
+      }
+    } catch (e) {
+      print("Error fetching managers: $e");
+    }
+  }
+
+  /// Fetch models and optionally append user's assigned models
+  Future<void> fetchAvailableModels({bool includeAssigned = false}) async {
+    try {
+      final response = await ApiService().callApiWithMap(
+        'users/available/models',
+        'Get',
+        mapData: {},
+      );
+
+      if (response != null && response is List) {
+        final fetchedModels = response.map((e) => UserRelation.fromJson(e)).toList();
+
+        // Include currently assigned models if not already in the list
+        if (includeAssigned && user.value?.modelsUnderManager != null) {
+          for (var model in user.value!.modelsUnderManager!) {
+            if (!fetchedModels.any((m) => m.id == model.id)) {
+              fetchedModels.insert(0, model);
+            }
+          }
+          selectedModels.assignAll(user.value!.modelsUnderManager!);
+        }
+
+        availableModels.assignAll(fetchedModels);
+      }
+    } catch (e) {
+      print("Error fetching models: $e");
+    }
+  }
+
+  void updateAssignedModels(List<UserRelation> models) {
+    selectedModels.assignAll(models);
   }
 
 }

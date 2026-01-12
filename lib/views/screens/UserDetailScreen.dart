@@ -67,23 +67,85 @@ class UserDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-
               // Uneditable: Name
               _infoCard(Icons.person, 'Name', user.fullName, editable: false),
-
               const SizedBox(height: 16),
-
               // Uneditable: Email
               _infoCard(Icons.email, 'Email', user.email, editable: false),
-
               const SizedBox(height: 16),
-
               // Role
               _infoCard(Icons.verified_user, 'Role', _capitalize(user.role), editable: false),
-
               const SizedBox(height: 30),
 
-              // Editable Fields
+              if (user.role == 'digital_creator') ...[
+                Obx(() {
+                  // Ensure selectedManager is an instance from the managers list
+                  UserRelation? dropdownValue;
+                  if (controller.selectedManager.value != null) {
+                    dropdownValue = controller.managers.firstWhere(
+                          (m) => m.id == controller.selectedManager.value!.id,
+                      orElse: () => controller.managers[0],
+                    );
+                  } else if (user.manager != null) {
+                    // Preselect user's current manager
+                    dropdownValue = controller.managers.firstWhere(
+                          (m) => m.id == user.manager!.id,
+                      orElse: () => controller.managers[0],
+                    );
+                    controller.selectedManager.value = dropdownValue;
+                  }
+
+                  return DropdownButtonFormField<UserRelation>(
+                    value: dropdownValue == null? controller.managers[0] : dropdownValue,
+                    hint: const Text('Select Manager'),
+                    decoration: _inputDecoration('Manager'),
+                    items: controller.managers.map((manager) {
+                      return DropdownMenuItem<UserRelation>(
+                        value: manager,
+                        child: Text(manager.fullName),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      controller.selectedManager.value = value;
+                    },
+                  );
+                }),
+                const SizedBox(height: 20),
+              ],
+
+              if (user.role == 'manager') ...[
+                const Text('Assigned Models', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                Obx(() {
+                  if (controller.availableModels.isEmpty) {
+                    return const Text('No digital creators available', style: TextStyle(color: Colors.grey));
+                  }
+
+                  return Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: controller.availableModels.map((model) {
+                      final isSelected = controller.selectedModels.any((m) => m.id == model.id);
+                      return FilterChip(
+                        label: Text(model.fullName),
+                        selected: isSelected,
+                        backgroundColor: Colors.grey[200],
+                        selectedColor: grailGold,
+                        labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black87),
+                        onSelected: (selected) {
+                          if (selected) {
+                            controller.selectedModels.add(model);
+                          } else {
+                            controller.selectedModels.removeWhere((m) => m.id == model.id);
+                          }
+                        },
+                      );
+                    }).toList(),
+                  );
+                }),
+                const SizedBox(height: 24),
+              ],
+
               TextField(
                 controller: controller.phoneController,
                 decoration: _inputDecoration('Phone'),

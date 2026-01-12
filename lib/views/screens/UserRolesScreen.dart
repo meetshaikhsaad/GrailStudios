@@ -191,6 +191,7 @@ class UsersRolesScreen extends StatelessWidget {
                   return UserCard(
                     user: user,
                     onTap: () {
+                      print("userid: " + user.id.toString());
                       Get.toNamed(
                         AppRoutes.userDetail,
                         arguments: {
