@@ -11,6 +11,7 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String addUser = '/addUser';
   static const String userDetail = '/userDetail';
+  static const String resetPassword = '/resetPassword';
 }
 
 class AppPages {
@@ -20,6 +21,7 @@ class AppPages {
     GetPage(name: AppRoutes.usersRoles, page: () => const UsersRolesScreen()),
     GetPage(name: AppRoutes.addUser, page: () => const AddUserScreen()),
     GetPage(name: AppRoutes.userDetail, page: () => const UserDetailScreen()),
+    GetPage(name: AppRoutes.resetPassword, page: () => const ResetPasswordScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),
     // GetPage(name: AppRoutes.compliance, page: () => const ComplianceScreen()),

@@ -135,7 +135,12 @@ class AppBarWidget {
                           title: const Text('Reset Password'),
                           onTap: () {
                             scaffoldKey.currentState?.closeDrawer();
-                            Get.toNamed(AppRoutes.reports);
+                            Get.offAllNamed(
+                              AppRoutes.resetPassword,
+                              arguments: {
+                                'userId': user?.id,
+                                'userFullName': user?.fullName,
+                              },);
                           },
                         ),
                       ],

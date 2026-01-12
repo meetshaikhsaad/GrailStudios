@@ -45,3 +45,4 @@ export 'package:grailstudios/views/screens/DashboardScreen.dart';
 export 'package:grailstudios/views/screens/UserRolesScreen.dart';
 export 'package:grailstudios/views/screens/AddUserScreen.dart';
 export 'package:grailstudios/views/screens/UserDetailScreen.dart';
+export 'package:grailstudios/views/screens/ResetPasswordScreen.dart';

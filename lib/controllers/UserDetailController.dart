@@ -21,6 +21,9 @@ class UserDetailController extends GetxController {
   final xLinkController = TextEditingController();
   final ofLinkController = TextEditingController();
   final instaLinkController = TextEditingController();
+  final currentPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final retypeNewPasswordController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
   var pendingProfilePictureUrl = Rxn<String>();
@@ -262,4 +265,73 @@ class UserDetailController extends GetxController {
       isUploadingImage.value = false;
     }
   }
+
+  Future<void> changePassword() async {
+    final oldPassword = currentPasswordController.text.trim();
+    final newPassword = newPasswordController.text.trim();
+    final confirmPassword = retypeNewPasswordController.text.trim();
+
+    if (oldPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+      Get.snackbar(
+        'Validation Error',
+        'All password fields are required',
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (newPassword != confirmPassword) {
+      Get.snackbar(
+        'Validation Error',
+        'New password and confirm password do not match',
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    isSaving.value = true;
+
+    try {
+      final response = await ApiService().callApiWithMap(
+        'users/change-password',
+        'Post',
+        mapData: {
+          'old_password': oldPassword,
+          'new_password': newPassword,
+          'confirm_password': confirmPassword,
+        },
+      );
+
+      if (response != null) {
+        // Clear fields on success
+        currentPasswordController.clear();
+        newPasswordController.clear();
+        retypeNewPasswordController.clear();
+
+        Get.snackbar(
+          'Success',
+          'Password changed successfully',
+          backgroundColor: grailGold,
+          colorText: Colors.white,
+        );
+
+        Get.offAllNamed(
+          AppRoutes.dashboard,
+        );
+
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to change password',
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
 }
