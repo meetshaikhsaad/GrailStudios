@@ -101,6 +101,7 @@ class AppBarWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
                     _drawerItem(Icons.home_outlined, 'Home', AppRoutes.dashboard, scaffoldKey),
+                    if (user?.role == 'admin' || user?.role == 'manager')
                     _drawerItem(Icons.people_outline, 'Users & Roles', AppRoutes.usersRoles, scaffoldKey),
                     _drawerItem(Icons.assignment_outlined, 'Tasks', AppRoutes.tasks, scaffoldKey),
                     _drawerItem(Icons.folder_open_outlined, 'Content Vault', AppRoutes.contentVault, scaffoldKey),

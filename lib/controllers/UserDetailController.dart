@@ -175,9 +175,16 @@ class UserDetailController extends GetxController {
       );
 
       if (response != null) {
-        final controller = Get.find<UsersAndRolesController>();
-        Get.back();
-        controller.fetchUsers();
+        try {
+          final controller = Get.find<UsersAndRolesController>();
+          Get.back();
+          controller.fetchUsers();
+        }catch(e){
+          Get.offAllNamed(
+            AppRoutes.dashboard,
+          );
+        }
+
         Get.snackbar(
           'Success',
           'User updated successfully!',

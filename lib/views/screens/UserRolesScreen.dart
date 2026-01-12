@@ -21,69 +21,81 @@ class UsersRolesScreen extends StatelessWidget {
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
 
-      floatingActionButton: FloatingActionButton(
-        shape: CircleBorder(),
-        backgroundColor: grailGold,
-        onPressed: () {
-          // Get.toNamed(AppRoutes.addUser);
-          Get.bottomSheet(
-            Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'User Actions',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
+      floatingActionButton: FutureBuilder<String>(
+          future: _getLoggedInUserRole(), // method to read from SharedPreferences
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return const SizedBox.shrink();
 
-                  ListTile(
-                    leading: const Icon(Icons.person_add, color: grailGold, size: 28),
-                    title: const Text('Add User', style: TextStyle(fontSize: 18)),
-                    onTap: () {
-                      Get.back(); // Close bottom sheet
-                      Get.toNamed(AppRoutes.addUser);
-                    },
-                  ),
+            final loggedInRole = snapshot.data;
 
-                  ListTile(
-                    leading: const Icon(Icons.person_add_alt_1, color: grailGold, size: 28),
-                    title: const Text('Assign User', style: TextStyle(fontSize: 18)),
-                    onTap: () {
-                      Get.back();
-                      // TODO: Implement Assign User screen/logic
-                      Get.snackbar(
-                        'Coming Soon',
-                        'Assign User feature will be available soon!',
-                        backgroundColor: grailGold,
-                        colorText: Colors.white,
-                      );
-                      // Example future navigation:
-                      // Get.toNamed(AppRoutes.assignUser);
-                    },
+            if (loggedInRole != 'admin' && loggedInRole != 'manager') {
+              return const SizedBox.shrink();; // don't show FAB
+            }
+          return FloatingActionButton(
+            shape: CircleBorder(),
+            backgroundColor: grailGold,
+            onPressed: () {
+              // Get.toNamed(AppRoutes.addUser);
+              Get.bottomSheet(
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   ),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'User Actions',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 20),
 
-                  const SizedBox(height: 10),
+                      ListTile(
+                        leading: const Icon(Icons.person_add, color: grailGold, size: 28),
+                        title: const Text('Add User', style: TextStyle(fontSize: 18)),
+                        onTap: () {
+                          Get.back(); // Close bottom sheet
+                          Get.toNamed(AppRoutes.addUser);
+                        },
+                      ),
 
-                  ListTile(
-                    title: const Center(
-                      child: Text('Cancel', style: TextStyle(color: Colors.red, fontSize: 18)),
-                    ),
-                    onTap: () => Get.back(),
+                      ListTile(
+                        leading: const Icon(Icons.person_add_alt_1, color: grailGold, size: 28),
+                        title: const Text('Assign User', style: TextStyle(fontSize: 18)),
+                        onTap: () {
+                          Get.back();
+                          // TODO: Implement Assign User screen/logic
+                          Get.snackbar(
+                            'Coming Soon',
+                            'Assign User feature will be available soon!',
+                            backgroundColor: grailGold,
+                            colorText: Colors.white,
+                          );
+                          // Example future navigation:
+                          // Get.toNamed(AppRoutes.assignUser);
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      ListTile(
+                        title: const Center(
+                          child: Text('Cancel', style: TextStyle(color: Colors.red, fontSize: 18)),
+                        ),
+                        onTap: () => Get.back(),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            isScrollControlled: true,
+                ),
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+              );
+            },
+            child: const Icon(Icons.more_horiz, color: Colors.white),
           );
-        },
-        child: const Icon(Icons.more_horiz, color: Colors.white),
+        }
       ),
 
       body: Column(
