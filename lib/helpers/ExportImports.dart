@@ -21,10 +21,13 @@ export 'package:grailstudios/services/ApiService.dart';
 //Widgets
 export 'package:grailstudios/views/widgets/InvertedTopCurveClipper.dart';
 export 'package:grailstudios/views/widgets/AppBarWidget.dart';
+export 'package:grailstudios/views/widgets/UserCard.dart';
 
 //models
 export 'package:grailstudios/models/ActiveUser.dart';
 export 'package:grailstudios/models/User.dart';
+export 'package:grailstudios/models/Manager.dart';
+export 'package:grailstudios/models/DigitalCreator.dart';
 
 //controller
 export 'package:grailstudios/controllers/LoginController.dart';

@@ -140,10 +140,101 @@ class AddUserScreen extends StatelessWidget {
                     child: Text(option['orientationName'] as String),
                   );
                 }).toList(),
-                onChanged: (value) => controller.selectedRole.value = value!,
+                onChanged: (value) {
+                  controller.selectedRole.value = value!;
+                  controller.selectedManagerId.value = 0;
+                  controller.selectedDigitalCreatorIds.clear();
+                },
                 validator: (value) => value == null ? 'Please select a role' : null,
               )),
               const SizedBox(height: 20),
+
+              // Manager Dropdown (only show if role is team_member or digital_creator)
+              Obx(() => Visibility(
+                visible: controller.selectedRole.value == 'digital_creator',
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Obx(() {
+                    if (controller.isLoadingManagers.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    // manager
+                    return DropdownButtonFormField<int>(
+                      value: controller.selectedManagerId.value,
+                      hint: const Text('Select Manager'),
+                      decoration: InputDecoration(
+                        labelText: 'Manager',
+                        filled: true,
+                        fillColor: const Color(0xFFF8F8F8),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      items: controller.managers.map((manager) {
+                        return DropdownMenuItem<int>(
+                          value: manager.id,
+                          child: Text(manager.fullName),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        controller.selectedManagerId.value = value;
+                      },
+                    );
+                  }),
+                ),
+              )),
+
+              // Multi-select Digital Creators (only for Manager role)
+              Obx(() => Visibility(
+                visible: controller.selectedRole.value == 'manager',
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Assign Models',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 10),
+                      Obx(() {
+                        if (controller.isLoadingDigitalCreators.value) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+
+                        if (controller.digitalCreators.isEmpty) {
+                          return const Text('No digital creators available', style: TextStyle(color: Colors.grey));
+                        }
+
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: controller.digitalCreators.map((creator) {
+                            final isSelected = controller.selectedDigitalCreatorIds.contains(creator.id);
+                            return FilterChip(
+                              label: Text(creator.fullName),
+                              selected: isSelected,
+                              backgroundColor: Colors.grey[200],
+                              selectedColor: grailGold,
+                              labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black87),
+                              onSelected: (selected) {
+                                if (selected) {
+                                  controller.selectedDigitalCreatorIds.add(creator.id);
+                                } else {
+                                  controller.selectedDigitalCreatorIds.remove(creator.id);
+                                }
+                              },
+                            );
+                          }).toList(),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              )),
 
               // Phone
               TextFormField(

@@ -13,7 +13,13 @@ class AddUserController extends GetxController {
   // Reactive values
   var selectedRole = ''.obs;
   var selectedGender = ''.obs;
+  var selectedManagerId = Rxn<int>();
+  var isLoadingManagers = false.obs;
+  var isLoadingDigitalCreators = false.obs;
   var isLoading = false.obs;
+
+  // Selected digital creators (multi-select)
+  var selectedDigitalCreatorIds = <int>[].obs;
 
   // Options
   final List<Map<String, dynamic>> roleOptions = const [
@@ -24,6 +30,16 @@ class AddUserController extends GetxController {
   ];
 
   final List<String> genders = ['Male', 'Female', 'Other'];
+
+  var managers = <Manager>[].obs;
+  var digitalCreators = <DigitalCreator>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchManagers();
+    fetchDigitalCreators();
+  }
 
   @override
   void onClose() {
@@ -45,6 +61,9 @@ class AddUserController extends GetxController {
       "username": usernameController.text.trim(),
       "password": passwordController.text,
       "role": selectedRole.value,
+      "manager_id": selectedManagerId.value ?? 0,
+      "assigned_model_id": 0,
+      "assign_model_ids": selectedRole.value == "manager"?selectedDigitalCreatorIds.value:[],
       "full_name": fullNameController.text.trim(),
       "phone": phoneController.text.trim(),
       "gender": selectedGender.value,
@@ -85,4 +104,58 @@ class AddUserController extends GetxController {
     }
 
   }
+
+  Future<void> fetchManagers() async {
+    isLoadingManagers.value = true;
+
+    try {
+      final response = await ApiService().callApiWithMap(
+        'users/available/managers',
+        'Get',
+        mapData: {},
+      );
+
+      if (response != null && response is List) {
+        final List<Manager> managerList =
+        response.map((json) => Manager.fromJson(json)).toList();
+
+        managerList.insert(
+          0,
+          Manager(
+            id: 0, // sentinel value
+            fullName: '-- No Manager --',
+            profilePictureUrl: null,
+            role: 'none',
+          ),
+        );
+
+        managers.value = managerList;
+        selectedManagerId.value = managerList.first.id;
+
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load managers', backgroundColor: grailErrorRed);
+    } finally {
+      isLoadingManagers.value = false;
+    }
+  }
+
+  Future<void> fetchDigitalCreators() async {
+    isLoadingDigitalCreators.value = true;
+    try {
+      final response = await ApiService().callApiWithMap(
+        'users/available/models',
+        'Get',
+        mapData: {},
+      );
+      if (response != null && response is List) {
+        digitalCreators.value = response.map((json) => DigitalCreator.fromJson(json)).toList();
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load digital creators', backgroundColor: grailErrorRed);
+    } finally {
+      isLoadingDigitalCreators.value = false;
+    }
+  }
+
 }

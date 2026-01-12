@@ -14,7 +14,9 @@ class UserDetailScreen extends StatelessWidget {
         title: Get.arguments['userFullName'],
         scaffoldKey: scaffoldKey,
         notificationVisibility: false,
-        showBackButton: true,
+        showBackButton: Get.arguments['showBackButton'] != null
+            ? Get.arguments['showBackButton']
+            : true,
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
       backgroundColor: Colors.white,
@@ -133,6 +135,9 @@ class UserDetailScreen extends StatelessWidget {
 
               Row(
                 children: [
+                  if(Get.arguments['showDeleteButton'] != null
+                      ? Get.arguments['showDeleteButton']
+                      : true)
                   Expanded(
                     child: OutlinedButton(
                       onPressed: controller.deleteUser,
@@ -145,6 +150,9 @@ class UserDetailScreen extends StatelessWidget {
                       child: const Text('Delete User', style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
+                  if(Get.arguments['showDeleteButton'] != null
+                      ? Get.arguments['showDeleteButton']
+                      : true)
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(

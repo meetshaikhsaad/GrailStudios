@@ -20,9 +20,65 @@ class UsersRolesScreen extends StatelessWidget {
         shape: CircleBorder(),
         backgroundColor: grailGold,
         onPressed: () {
-          Get.toNamed(AppRoutes.addUser);
+          // Get.toNamed(AppRoutes.addUser);
+          Get.bottomSheet(
+            Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'User Actions',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+
+                  ListTile(
+                    leading: const Icon(Icons.person_add, color: grailGold, size: 28),
+                    title: const Text('Add User', style: TextStyle(fontSize: 18)),
+                    onTap: () {
+                      Get.back(); // Close bottom sheet
+                      Get.toNamed(AppRoutes.addUser);
+                    },
+                  ),
+
+                  ListTile(
+                    leading: const Icon(Icons.person_add_alt_1, color: grailGold, size: 28),
+                    title: const Text('Assign User', style: TextStyle(fontSize: 18)),
+                    onTap: () {
+                      Get.back();
+                      // TODO: Implement Assign User screen/logic
+                      Get.snackbar(
+                        'Coming Soon',
+                        'Assign User feature will be available soon!',
+                        backgroundColor: grailGold,
+                        colorText: Colors.white,
+                      );
+                      // Example future navigation:
+                      // Get.toNamed(AppRoutes.assignUser);
+                    },
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  ListTile(
+                    title: const Center(
+                      child: Text('Cancel', style: TextStyle(color: Colors.red, fontSize: 18)),
+                    ),
+                    onTap: () => Get.back(),
+                  ),
+                ],
+              ),
+            ),
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+          );
         },
-        child: const Icon(Icons.person_add_alt_1, color: Colors.white),
+        child: const Icon(Icons.more_horiz, color: Colors.white),
       ),
 
       body: Column(
@@ -31,6 +87,9 @@ class UsersRolesScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
             child: TextField(
+              onChanged: (value) {
+                controller.searchQuery.value = value.trim();
+              },
               decoration: InputDecoration(
                 hintText: 'Search',
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
@@ -46,18 +105,49 @@ class UsersRolesScreen extends StatelessWidget {
           ),
 
           // Filter Chips (STATIC)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                _filterChip('All', true, () {}),
-                _filterChip('Managers 12', false, () {}),
-                _filterChip('Models 40', false, () {}),
-                _filterChip('Team 112', false, () {}),
-              ],
-            ),
-          ),
+          Obx(() {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  _filterChip(
+                    'All',
+                    controller.selectedRole.value.isEmpty,
+                        () {
+                      controller.selectedRole.value = '';
+                      controller.refreshUsers();
+                    },
+                  ),
+                  _filterChip(
+                    'Admins',
+                    controller.selectedRole.value == 'admin',
+                        () {
+                      controller.selectedRole.value = 'admin';
+                      controller.refreshUsers();
+                    },
+                  ),
+                  _filterChip(
+                    'Managers',
+                    controller.selectedRole.value == 'manager',
+                        () {
+                      controller.selectedRole.value = 'manager';
+                      controller.refreshUsers();
+                    },
+                  ),
+                  _filterChip(
+                    'Models',
+                    controller.selectedRole.value == 'digital_creator',
+                        () {
+                      controller.selectedRole.value = 'digital_creator';
+                      controller.refreshUsers();
+                    },
+                  ),
+                ],
+              ),
+            );
+          }),
+
 
           const SizedBox(height: 10),
 
@@ -98,54 +188,19 @@ class UsersRolesScreen extends StatelessWidget {
                 itemCount: controller.users.length,
                 itemBuilder: (context, index) {
                   final user = controller.users[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(16),
-                      leading: CircleAvatar(
-                        radius: 32,
-                        backgroundImage: user.profilePictureUrl != null
-                            ? NetworkImage(user.profilePictureUrl!)
-                            : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-                      ),
-                      title: Text(
-                        user.fullName,
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.blue[50],
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              user.role,
-                              style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 13),
-                            ),
-                          ),
-                          // const SizedBox(height: 10),
-                          // _warningText('Tasks: 7/12 (5 missed tasks)'),
-                          // _warningText('Missing items - 8'),
-                          // const SizedBox(height: 4),
-                          // _warningText('NDA - Expired'),
-                          // _warningText('Content - Pending'),
-                        ],
-                      ),
-                      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 18),
-                      onTap: () {
-                        print("user id: "+user.id.toString());
-                        Get.toNamed(AppRoutes.userDetail, arguments: {'userId': user.id, 'userFullName': user.fullName});
-                      },
-                    ),
+                  return UserCard(
+                    user: user,
+                    onTap: () {
+                      Get.toNamed(
+                        AppRoutes.userDetail,
+                        arguments: {
+                          'userId': user.id,
+                          'userFullName': user.fullName,
+                        },
+                      );
+                    },
                   );
+
                 },
               );
             }),

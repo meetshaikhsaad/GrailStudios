@@ -13,9 +13,17 @@ class UsersAndRolesController extends GetxController {
   var isLoadingMore = false.obs;
   var hasMoreData = true.obs;
 
+  final searchQuery = ''.obs;
+  final selectedRole = ''.obs; // '', 'admin', 'manager', 'model'
+
   @override
   void onInit() {
     super.onInit();
+    // Debounce search to avoid API spam
+    debounce(searchQuery, (_) {
+      refreshUsers();
+    }, time: const Duration(milliseconds: 500));
+
     fetchUsers();
   }
 
@@ -28,6 +36,7 @@ class UsersAndRolesController extends GetxController {
       hasError.value = false;
       users.clear();
       skip = 0;
+      hasMoreData.value = true;
     }
 
     try {
@@ -37,7 +46,10 @@ class UsersAndRolesController extends GetxController {
         queryParams: {
           'skip': skip.toString(),
           'limit': limit.toString(),
-          'role': "",
+          if (selectedRole.value.isNotEmpty)
+            'role': selectedRole.value,
+          if (searchQuery.value.isNotEmpty)
+            'search': searchQuery.value,
         },
         mapData: {}, // Not needed for GET
       );

@@ -77,7 +77,15 @@ class AppBarWidget {
                           scaffoldKey.currentState?.closeDrawer();
                           // Get.toNamed(AppRoutes.profile);
                           print("userid: "+user!.id.toString());
-                          Get.toNamed(AppRoutes.userDetail, arguments: {'userId': user?.id, 'userFullName': user?.fullName});
+                          Get.offAllNamed(
+                            AppRoutes.userDetail,
+                            arguments: {
+                              'userId': user?.id,
+                              'userFullName': user?.fullName,
+                              'showBackButton': false,
+                              'showDeleteButton': false,
+                            },
+                          );
                         },
                       ),
                     ],
@@ -98,7 +106,40 @@ class AppBarWidget {
                     _drawerItem(Icons.folder_open_outlined, 'Content Vault', AppRoutes.contentVault, scaffoldKey),
                     _drawerItem(Icons.verified_user_outlined, 'Compliance', AppRoutes.compliance, scaffoldKey),
                     _drawerItem(Icons.bar_chart_outlined, 'Reports', AppRoutes.reports, scaffoldKey),
-                    _drawerItem(Icons.settings_outlined, 'Settings', AppRoutes.settings, scaffoldKey),
+                    ExpansionTile(
+                      leading: const Icon(Icons.settings_outlined, color: Colors.grey),
+                      title: const Text(
+                        'Settings',
+                        // style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      childrenPadding: const EdgeInsets.only(left: 16),
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.person_outline, size: 20),
+                          title: const Text('Profile'),
+                          onTap: () {
+                            scaffoldKey.currentState?.closeDrawer();
+                            Get.offAllNamed(
+                              AppRoutes.userDetail,
+                              arguments: {
+                                'userId': user?.id,
+                                'userFullName': user?.fullName,
+                                'showBackButton': false,
+                                'showDeleteButton': false,
+                              },
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.lock_reset_outlined, size: 20),
+                          title: const Text('Reset Password'),
+                          onTap: () {
+                            scaffoldKey.currentState?.closeDrawer();
+                            Get.toNamed(AppRoutes.reports);
+                          },
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

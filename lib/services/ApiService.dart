@@ -105,21 +105,42 @@ class ApiService {
       message: 'Saved user',
       accessToken: token,
       refreshToken: prefs.getString(AppConstants.REFRESH_TOKEN) ?? '',
-      user: ActiveUserClass(
+      user: ActiveUserProfile(
         id: prefs.getInt(AppConstants.USER_ID) ?? 0,
+        username: prefs.getString(AppConstants.USER_USERNAME),
         email: prefs.getString(AppConstants.USER_EMAIL) ?? '',
-        username: prefs.getString(AppConstants.USER_USERNAME) ?? '',
         fullName: prefs.getString(AppConstants.USER_FULLNAME) ?? '',
         role: prefs.getString(AppConstants.USER_ROLE) ?? '',
-        isOnboarded: prefs.getBool(AppConstants.IS_ONBOARDED) ?? false,
-        profilePictureUrl: prefs.getString(AppConstants.PROFILE_PICTURE_URL) ?? '',
-        timezone: null,
+        accountStatus: null,
+
+        manager: null,
+        assignedModelRel: null,
+        modelsUnderManager: const [],
+
         phone: null,
+        mobileNumber: null,
+        profilePictureUrl:
+        prefs.getString(AppConstants.PROFILE_PICTURE_URL) ?? '',
+        bio: null,
         gender: null,
+        dob: null,
+        city: null,
+        countryId: null,
+        address1: null,
+        address2: null,
+        zipcode: null,
+
+        xLink: null,
+        ofLink: null,
+        instaLink: null,
+
+        isOnboarded: prefs.getBool(AppConstants.IS_ONBOARDED) ?? false,
         createdAt: DateTime.now(),
+        lastLogin: null,
       ),
     );
   }
+
 
   static Future<void> clearUserData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -131,6 +152,7 @@ class ApiService {
     await prefs.remove(AppConstants.USER_EMAIL);
     await prefs.remove(AppConstants.USER_ROLE);
     await prefs.remove(AppConstants.IS_ONBOARDED);
+    await prefs.remove(AppConstants.PROFILE_PICTURE_URL);
   }
 
   // ── LOGIN API ──
@@ -434,12 +456,13 @@ class ApiService {
     final statusCode = response.statusCode;
 
     if (statusCode == 401) {
-      Get.snackbar(
-        'Session Expired',
-        'Please login again.',
-        backgroundColor: grailErrorRed,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   'Session Expired',
+      //   'Please login again.',
+      //   backgroundColor: grailErrorRed,
+      //   colorText: Colors.white,
+      // );
+      refreshAccessToken();
       return;
     }
 
