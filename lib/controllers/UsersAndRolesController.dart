@@ -16,6 +16,16 @@ class UsersAndRolesController extends GetxController {
   final searchQuery = ''.obs;
   final selectedRole = ''.obs; // '', 'admin', 'manager', 'model'
 
+  // Assign User (Bottom Sheet 2)
+  var assignModels = <UserRelation>[].obs;    // digital creators
+  var assignManagers = <UserRelation>[].obs;  // managers
+
+  var selectedAssignModel = Rxn<UserRelation>();
+  var selectedAssignManager = Rxn<UserRelation>();
+
+  var isAssignLoading = false.obs;
+
+
   @override
   void onInit() {
     super.onInit();
@@ -88,6 +98,93 @@ class UsersAndRolesController extends GetxController {
     }
   }
 
+  Future<void> fetchAssignData() async {
+    try {
+      isAssignLoading.value = true;
+
+      // Fetch digital creators
+      final modelsRes = await ApiService().callApiWithMap(
+        'users/available/models',
+        'Get',
+        mapData: {},
+      );
+
+      if (modelsRes is List) {
+        assignModels.assignAll(
+          modelsRes.map((e) => UserRelation.fromJson(e)).toList(),
+        );
+      }
+
+      // Fetch managers
+      final managersRes = await ApiService().callApiWithMap(
+        'users/available/managers',
+        'Get',
+        mapData: {},
+      );
+
+      if (managersRes is List) {
+        final list = managersRes.map((e) => UserRelation.fromJson(e)).toList();
+        list.insert(0, UserRelation(id: 0, fullName: '-- No Manager --', role: 'none'));
+        assignManagers.assignAll(list);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to load assign data',
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+    } finally {
+      isAssignLoading.value = false;
+    }
+  }
+
+
+  Future<void> assignUserToManager() async {
+    if (selectedAssignModel.value == null) {
+      Get.snackbar('Validation', 'Please select a user');
+      return;
+    }
+
+    isAssignLoading.value = true;
+
+    try {
+      final payload = {
+        "manager_id": selectedAssignManager.value != null &&
+            selectedAssignManager.value!.id != 0
+            ? selectedAssignManager.value!.id
+            : null,
+      };
+
+      await ApiService().callApiWithMap(
+        'users/${selectedAssignModel.value!.id}',
+        'Put',
+        mapData: payload,
+      );
+
+      Get.back(); // close assign sheet
+      refreshUsers();
+
+      Get.snackbar(
+        'Success',
+        'User assigned successfully',
+        backgroundColor: grailGold,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to assign user',
+        backgroundColor: grailErrorRed,
+        colorText: Colors.white,
+      );
+    } finally {
+      isAssignLoading.value = false;
+      selectedAssignManager.value = null;
+    }
+  }
+
+
   Future<void> refreshUsers() async {
     await fetchUsers();
   }
@@ -95,4 +192,7 @@ class UsersAndRolesController extends GetxController {
   Future<void> loadMoreUsers() async {
     await fetchUsers(loadMore: true);
   }
+
+
+
 }

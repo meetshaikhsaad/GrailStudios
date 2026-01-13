@@ -4,7 +4,8 @@ class AppRoutes {
   static const String login = '/login';
   static const String dashboard = '/dashboard';
   static const String usersRoles = '/users-roles';
-  static const String tasks = '/tasks';
+  static const String tasksAssigner = '/tasks-assigner';
+  static const String tasksSubmission = '/tasks-submission';
   static const String contentVault = '/content-vault';
   static const String compliance = '/compliance';
   static const String reports = '/reports';

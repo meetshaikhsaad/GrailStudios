@@ -8,6 +8,94 @@ class UsersRolesScreen extends StatelessWidget {
     return prefs.getString(AppConstants.USER_ROLE) ?? '';
   }
 
+  void _openAssignUserSheet(UsersAndRolesController controller) {
+    controller.selectedAssignModel.value = null;
+    controller.selectedAssignManager.value = null;
+
+    controller.fetchAssignData();
+
+    Get.bottomSheet(
+      Obx(() {
+        if (controller.isAssignLoading.value) {
+          return const Padding(
+            padding: EdgeInsets.all(32),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Assign User',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+
+              // Digital Creator
+              DropdownButtonFormField<UserRelation>(
+                decoration: const InputDecoration(labelText: 'User'),
+                value: controller.selectedAssignModel.value,
+                items: controller.assignModels
+                    .map((u) => DropdownMenuItem(
+                  value: u,
+                  child: Text(u.fullName),
+                ))
+                    .toList(),
+                onChanged: (val) => controller.selectedAssignModel.value = val,
+              ),
+              const SizedBox(height: 16),
+
+              // Manager
+              DropdownButtonFormField<UserRelation>(
+                decoration: const InputDecoration(labelText: 'Manager'),
+                value: controller.selectedAssignManager.value ?? controller.assignManagers.first,
+                items: controller.assignManagers
+                    .map((m) => DropdownMenuItem(
+                  value: m,
+                  child: Text(m.fullName),
+                ))
+                    .toList(),
+                onChanged: (val) => controller.selectedAssignManager.value = val,
+              ),
+              const SizedBox(height: 24),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: controller.assignUserToManager,
+                      style: ElevatedButton.styleFrom(backgroundColor: grailGold),
+                      child: const Text(
+                        'Assign',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      }),
+      isScrollControlled: true,
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final UsersAndRolesController controller = Get.put(UsersAndRolesController());
@@ -16,7 +104,7 @@ class UsersRolesScreen extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBarWidget.appBarWave(
-        title: 'Users & Assign Users',
+        title: 'Users',
         scaffoldKey: scaffoldKey
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
@@ -67,12 +155,8 @@ class UsersRolesScreen extends StatelessWidget {
                         onTap: () {
                           Get.back();
                           // TODO: Implement Assign User screen/logic
-                          Get.snackbar(
-                            'Coming Soon',
-                            'Assign User feature will be available soon!',
-                            backgroundColor: grailGold,
-                            colorText: Colors.white,
-                          );
+                          final controller = Get.find<UsersAndRolesController>();
+                          _openAssignUserSheet(controller);
                           // Example future navigation:
                           // Get.toNamed(AppRoutes.assignUser);
                         },

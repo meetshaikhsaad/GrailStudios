@@ -100,10 +100,13 @@ class AppBarWidget {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    _drawerItem(Icons.home_outlined, 'Home', AppRoutes.dashboard, scaffoldKey),
+                    _drawerItem(Icons.home_outlined, 'Dashboard', AppRoutes.dashboard, scaffoldKey),
                     if (user?.role == 'admin' || user?.role == 'manager')
-                    _drawerItem(Icons.people_outline, 'Users & Roles', AppRoutes.usersRoles, scaffoldKey),
-                    _drawerItem(Icons.assignment_outlined, 'Tasks', AppRoutes.tasks, scaffoldKey),
+                      _drawerItem(Icons.people_outline, 'Users', AppRoutes.usersRoles, scaffoldKey),
+                    if (user?.role == 'manager' || user?.role == 'team_member')
+                      _drawerItem(Icons.assignment_outlined, 'Task Assigner', AppRoutes.tasksAssigner, scaffoldKey),
+                    if (user?.role == 'digital_Creator' )
+                      _drawerItem(Icons.assignment_outlined, 'Task Submission', AppRoutes.tasksSubmission, scaffoldKey),
                     _drawerItem(Icons.folder_open_outlined, 'Content Vault', AppRoutes.contentVault, scaffoldKey),
                     _drawerItem(Icons.verified_user_outlined, 'Compliance', AppRoutes.compliance, scaffoldKey),
                     _drawerItem(Icons.bar_chart_outlined, 'Reports', AppRoutes.reports, scaffoldKey),
