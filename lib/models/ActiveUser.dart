@@ -129,13 +129,13 @@ class ActiveUserProfile {
 class RelatedUser {
   final int id;
   final String fullName;
-  final String profilePictureUrl;
+  final String? profilePictureUrl;
   final String role;
 
   RelatedUser({
     required this.id,
     required this.fullName,
-    required this.profilePictureUrl,
+    this.profilePictureUrl,
     required this.role,
   });
 
