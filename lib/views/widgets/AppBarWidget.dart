@@ -105,7 +105,7 @@ class AppBarWidget {
                       _drawerItem(Icons.people_outline, 'Users', AppRoutes.usersRoles, scaffoldKey),
                     if (user?.role == 'manager' || user?.role == 'team_member')
                       _drawerItem(Icons.assignment_outlined, 'Task Assigner', AppRoutes.tasksAssigner, scaffoldKey),
-                    if (user?.role == 'digital_Creator' )
+                    if (user?.role == 'digital_creator' )
                       _drawerItem(Icons.assignment_outlined, 'Task Submission', AppRoutes.tasksSubmission, scaffoldKey),
                     _drawerItem(Icons.folder_open_outlined, 'Content Vault', AppRoutes.contentVault, scaffoldKey),
                     _drawerItem(Icons.verified_user_outlined, 'Compliance', AppRoutes.compliance, scaffoldKey),

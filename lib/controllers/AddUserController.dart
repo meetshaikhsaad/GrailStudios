@@ -20,6 +20,12 @@ class AddUserController extends GetxController {
 
   // Selected digital creators (multi-select)
   var selectedDigitalCreatorIds = <int>[].obs;
+  var loggedInRole = ''.obs;
+
+  Future<void> _loadLoggedInUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    loggedInRole.value = prefs.getString(AppConstants.USER_ROLE) ?? '';
+  }
 
   // Options
   final List<Map<String, dynamic>> roleOptions = const [
@@ -37,6 +43,7 @@ class AddUserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadLoggedInUserRole();
     fetchManagers();
     fetchDigitalCreators();
   }

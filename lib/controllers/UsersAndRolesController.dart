@@ -184,7 +184,6 @@ class UsersAndRolesController extends GetxController {
     }
   }
 
-
   Future<void> refreshUsers() async {
     await fetchUsers();
   }

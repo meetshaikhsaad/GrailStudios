@@ -121,32 +121,49 @@ class AddUserScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Role
-              Obx(() => DropdownButtonFormField<String>(
-                value: controller.selectedRole.value.isEmpty ? null : controller.selectedRole.value,
-                hint: const Text('Select Role'),
-                decoration: InputDecoration(
-                  labelText: 'Role',
-                  filled: true,
-                  fillColor: const Color(0xFFF8F8F8),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide.none,
+              Obx(() {
+                // filter roles based on logged-in role
+                final visibleRoles = controller.roleOptions.where((role) {
+                  if (role['id'] == 'admin' || role['id'] == 'manager') {
+                    return controller.loggedInRole.value == 'admin';
+                  }
+                  return true;
+                }).toList();
+
+                return DropdownButtonFormField<String>(
+                  value: controller.selectedRole.value.isEmpty
+                      ? null
+                      : controller.selectedRole.value,
+                  hint: const Text('Select Role'),
+                  decoration: InputDecoration(
+                    labelText: 'Role',
+                    filled: true,
+                    fillColor: const Color(0xFFF8F8F8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 20,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
-                ),
-                items: controller.roleOptions.map((option) {
-                  return DropdownMenuItem<String>(
-                    value: option['id'] as String,
-                    child: Text(option['orientationName'] as String),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  controller.selectedRole.value = value!;
-                  controller.selectedManagerId.value = 0;
-                  controller.selectedDigitalCreatorIds.clear();
-                },
-                validator: (value) => value == null ? 'Please select a role' : null,
-              )),
+                  items: visibleRoles.map((option) {
+                    return DropdownMenuItem<String>(
+                      value: option['id'] as String,
+                      child: Text(option['orientationName'] as String),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    controller.selectedRole.value = value!;
+                    controller.selectedManagerId.value = 0;
+                    controller.selectedDigitalCreatorIds.clear();
+                  },
+                  validator: (value) =>
+                  value == null ? 'Please select a role' : null,
+                );
+              }),
+
               const SizedBox(height: 20),
 
               // Manager Dropdown (only show if role is team_member or digital_creator)
