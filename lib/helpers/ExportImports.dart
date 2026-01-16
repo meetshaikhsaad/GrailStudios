@@ -28,6 +28,7 @@ export 'package:grailstudios/models/ActiveUser.dart';
 export 'package:grailstudios/models/User.dart';
 export 'package:grailstudios/models/Manager.dart';
 export 'package:grailstudios/models/DigitalCreator.dart';
+export 'package:grailstudios/models/TaskAssignee.dart';
 
 //controller
 export 'package:grailstudios/controllers/LoginController.dart';
@@ -35,6 +36,8 @@ export 'package:grailstudios/controllers/ForgotPasswordController.dart';
 export 'package:grailstudios/controllers/UsersAndRolesController.dart';
 export 'package:grailstudios/controllers/AddUserController.dart';
 export 'package:grailstudios/controllers/UserDetailController.dart';
+export 'package:grailstudios/controllers/TaskAssignerController.dart';
+export 'package:grailstudios/controllers/TaskSubmissionController.dart';
 
 
 //Screens
@@ -46,3 +49,5 @@ export 'package:grailstudios/views/screens/UserRolesScreen.dart';
 export 'package:grailstudios/views/screens/AddUserScreen.dart';
 export 'package:grailstudios/views/screens/UserDetailScreen.dart';
 export 'package:grailstudios/views/screens/ResetPasswordScreen.dart';
+export 'package:grailstudios/views/screens/TaskAssignerScreen.dart';
+export 'package:grailstudios/views/screens/TaskSubmissionScreen.dart';
