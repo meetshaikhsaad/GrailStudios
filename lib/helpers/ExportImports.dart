@@ -28,6 +28,7 @@ export 'package:grailstudios/models/ActiveUser.dart';
 export 'package:grailstudios/models/User.dart';
 export 'package:grailstudios/models/Manager.dart';
 export 'package:grailstudios/models/DigitalCreator.dart';
+export 'package:grailstudios/models/Task.dart';
 export 'package:grailstudios/models/TaskAssignee.dart';
 
 //controller

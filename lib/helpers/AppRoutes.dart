@@ -23,7 +23,7 @@ class AppPages {
     GetPage(name: AppRoutes.addUser, page: () => const AddUserScreen()),
     GetPage(name: AppRoutes.userDetail, page: () => const UserDetailScreen()),
     GetPage(name: AppRoutes.resetPassword, page: () => const ResetPasswordScreen()),
-    GetPage(name: AppRoutes.tasksAssigner, page: () => const TaskAssignerScreen()),
+    GetPage(name: AppRoutes.tasksAssigner, page: () => TaskAssignerScreen()),
     GetPage(name: AppRoutes.tasksSubmission, page: () => const TaskSubmissionScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),
