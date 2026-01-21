@@ -9,7 +9,7 @@ class TaskSubmissionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TaskSubmissionController controller = Get.put(TaskSubmissionController());
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final List<String> statusOptions = ['All', 'General', 'In Progress', 'Completed'];
+    final List<String> statusOptions = ['To Do', 'Blocked', 'Completed', 'Missed'];
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=

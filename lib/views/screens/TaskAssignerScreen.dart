@@ -15,7 +15,7 @@ class TaskAssignerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TaskAssignerController controller = Get.put(TaskAssignerController());
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final List<String> statusOptions = ['All', 'General', 'In Progress', 'Completed'];
+    final List<String> statusOptions = ['All', 'To Do', 'Blocked', 'Completed', 'Missed'];
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=

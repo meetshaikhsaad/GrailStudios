@@ -65,7 +65,9 @@ class Task {
       reqDurationMin: json['req_duration_min'],
       reqOutfitTags: json['req_outfit_tags'] == null
           ? null
-          : List<String>.from(json['req_outfit_tags']),
+          : (json['req_outfit_tags'] is List
+          ? List<String>.from(json['req_outfit_tags'])
+          : [json['req_outfit_tags'].toString()]),
       reqFaceVisible: json['req_face_visible'],
       reqWatermark: json['req_watermark'],
       context: json['context'],
