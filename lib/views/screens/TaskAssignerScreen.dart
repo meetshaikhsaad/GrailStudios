@@ -159,7 +159,10 @@ class TaskAssignerScreen extends StatelessWidget {
                   }
 
                   final task = controller.tasks[index];
-                  return TaskCard(task: task);
+                  return InkWell(
+                    onTap: () => _showTaskOptionsBottomSheet(task),
+                    child: TaskCard(task: task),
+                  );
                 },
               );
 
@@ -169,6 +172,109 @@ class TaskAssignerScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _showTaskOptionsBottomSheet(Task task) {
+    showModalBottomSheet(
+      context: Get.context!,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Task Options',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+
+              // Edit Option
+              Visibility(
+                visible: task.status != 'Completed',
+                child: ListTile(
+                  leading: const Icon(Icons.edit, color: grailGold),
+                  title: const Text('Edit'),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close sheet
+                    // Navigation AFTER sheet is closed
+                    Future.microtask(() {
+                      Get.to(() => EditTaskScreen(taskId: task.id!));
+                    });
+                  },
+                ),
+              ),
+
+              // Delete Option
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Delete'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Future.microtask(() => _confirmDeleteTask(task.id!));
+                },
+              ),
+
+              // Chat Option
+              ListTile(
+                leading: const Icon(Icons.chat, color: Colors.blue),
+                title: const Text('Chat'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Future.microtask(() {
+                    // Get.toNamed(AppRoutes.taskChat, arguments: {'taskId': task.id});
+                  });
+                },
+              ),
+
+              const SizedBox(height: 10),
+
+              // Cancel
+              ListTile(
+                title: const Center(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                onTap: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _confirmDeleteTask(int taskId) {
+    Get.defaultDialog(
+      title: 'Confirm Delete',
+      middleText: 'Are you sure you want to delete this task?',
+      textConfirm: 'Delete',
+      textCancel: 'Cancel',
+      confirmTextColor: Colors.white,
+      onConfirm: () async {
+        Get.back(); // close dialog
+        try {
+          await ApiService().callApiWithMap(
+            'tasks/$taskId',
+            'DELETE',
+            mapData: {},
+          );
+          Get.snackbar('Success', 'Task deleted successfully');
+          // Refresh task list
+          final controller = Get.find<TaskAssignerController>();
+          controller.fetchTasks();
+        } catch (e) {
+          Get.snackbar('Error', 'Failed to delete task: $e', backgroundColor: Colors.red, colorText: Colors.white);
+        }
+      },
+    );
+  }
+
 
   Widget _filterChip(String label, bool isSelected, VoidCallback onTap) {
     return Padding(

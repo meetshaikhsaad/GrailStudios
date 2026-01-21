@@ -41,6 +41,7 @@ export 'package:grailstudios/controllers/UserDetailController.dart';
 export 'package:grailstudios/controllers/TaskAssignerController.dart';
 export 'package:grailstudios/controllers/TaskSubmissionController.dart';
 export 'package:grailstudios/controllers/CreateTaskController.dart';
+export 'package:grailstudios/controllers/EditTaskController.dart';
 
 
 //Screens
@@ -55,3 +56,4 @@ export 'package:grailstudios/views/screens/ResetPasswordScreen.dart';
 export 'package:grailstudios/views/screens/TaskAssignerScreen.dart';
 export 'package:grailstudios/views/screens/TaskSubmissionScreen.dart';
 export 'package:grailstudios/views/screens/CreateTaskScreen.dart';
+export 'package:grailstudios/views/screens/EditTaskScreen.dart';
