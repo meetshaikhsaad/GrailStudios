@@ -6,6 +6,10 @@ class TaskAssignerScreen extends StatelessWidget {
   TaskAssignerScreen({super.key});
 
   final ScrollController _scrollController = ScrollController();
+  Future<String> _getLoggedInUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(AppConstants.USER_ROLE) ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +30,39 @@ class TaskAssignerScreen extends StatelessWidget {
       appBar: AppBarWidget.appBarWave(
         title: 'Task Assign',
         scaffoldKey: scaffoldKey,
-        showBackButton: true,
+        showBackButton: false,
       ),
+      floatingActionButton: FutureBuilder<String>(
+        future: _getLoggedInUserRole(), // method to read from SharedPreferences
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const SizedBox.shrink();
+
+          final loggedInRole = snapshot.data;
+
+          // Only show FAB for admin or manager
+          if (loggedInRole != 'admin' && loggedInRole != 'manager') {
+            return const SizedBox.shrink();
+          }
+
+          return FloatingActionButton(
+            shape: const CircleBorder(),
+            backgroundColor: grailGold,
+            onPressed: () {
+              // Directly navigate to the screen
+              Get.toNamed(AppRoutes.createTask);
+            },
+            child: const Icon(Icons.add, color: Colors.white), // FAB icon
+          );
+        },
+      ),
+
       drawer: AppBarWidget.appDrawer(scaffoldKey),
       backgroundColor: Colors.white,
       body: Column(
         children: [
           // Search Bar + Filter Icon
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
             child: Row(
               children: [
                 Expanded(
@@ -153,101 +181,6 @@ class TaskAssignerScreen extends StatelessWidget {
         labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black87),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30), side: BorderSide.none),
         onSelected: (_) => onTap(),
-      ),
-    );
-  }
-}
-
-// Reusable Task Card Widget
-class TaskCard extends StatelessWidget {
-  final Task task;
-
-  const TaskCard({super.key, required this.task});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: () {
-          // TODO: Navigate to task detail
-          Get.snackbar('Task', 'Task detail coming soon!');
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                task.title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                task.description,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
-
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[50],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      task.status,
-                      style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 12),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.orange[50],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'In Progress',
-                      style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.w600, fontSize: 12),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundImage: task.assignee.profilePictureUrl != null
-                        ? NetworkImage(task.assignee.profilePictureUrl!)
-                        : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    task.assignee.fullName,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const Spacer(),
-                  Text(
-                    DateFormat('dd MMM yyyy, hh:mm a').format(task.dueDate.toLocal()),
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -6,7 +6,7 @@ class Task {
   final String description;
   final String status;
   final String priority;
-  final DateTime dueDate;
+  final DateTime? dueDate;
   final DateTime createdAt;
 
   final String reqContentType;
@@ -32,7 +32,7 @@ class Task {
     required this.description,
     required this.status,
     required this.priority,
-    required this.dueDate,
+    this.dueDate,
     required this.createdAt,
     required this.reqContentType,
     required this.reqQuantity,
@@ -56,7 +56,9 @@ class Task {
       description: json['description'] ?? '',
       status: json['status'],
       priority: json['priority'],
-      dueDate: DateTime.parse(json['due_date']),
+      dueDate: json['due_date'] != null
+          ? DateTime.parse(json['due_date'])
+          : null,
       createdAt: DateTime.parse(json['created_at']),
       reqContentType: json['req_content_type'],
       reqQuantity: json['req_quantity'],
@@ -85,7 +87,7 @@ class Task {
       'description': description,
       'status': status,
       'priority': priority,
-      'due_date': dueDate.toIso8601String(),
+      'due_date': dueDate?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'req_content_type': reqContentType,
       'req_quantity': reqQuantity,
@@ -142,7 +144,7 @@ class Attachment {
   final int id;
   final int uploaderId;
   final String fileUrl;
-  final String thumbnailUrl;
+  final String? thumbnailUrl;
   final String status;
   final DateTime createdAt;
 
@@ -150,7 +152,7 @@ class Attachment {
     required this.id,
     required this.uploaderId,
     required this.fileUrl,
-    required this.thumbnailUrl,
+    this.thumbnailUrl,
     required this.status,
     required this.createdAt,
   });

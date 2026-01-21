@@ -22,6 +22,7 @@ export 'package:grailstudios/services/ApiService.dart';
 export 'package:grailstudios/views/widgets/InvertedTopCurveClipper.dart';
 export 'package:grailstudios/views/widgets/AppBarWidget.dart';
 export 'package:grailstudios/views/widgets/UserCard.dart';
+export 'package:grailstudios/views/widgets/TaskCard.dart';
 
 //models
 export 'package:grailstudios/models/ActiveUser.dart';
@@ -39,6 +40,7 @@ export 'package:grailstudios/controllers/AddUserController.dart';
 export 'package:grailstudios/controllers/UserDetailController.dart';
 export 'package:grailstudios/controllers/TaskAssignerController.dart';
 export 'package:grailstudios/controllers/TaskSubmissionController.dart';
+export 'package:grailstudios/controllers/CreateTaskController.dart';
 
 
 //Screens
@@ -52,3 +54,4 @@ export 'package:grailstudios/views/screens/UserDetailScreen.dart';
 export 'package:grailstudios/views/screens/ResetPasswordScreen.dart';
 export 'package:grailstudios/views/screens/TaskAssignerScreen.dart';
 export 'package:grailstudios/views/screens/TaskSubmissionScreen.dart';
+export 'package:grailstudios/views/screens/CreateTaskScreen.dart';

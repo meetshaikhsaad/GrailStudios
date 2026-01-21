@@ -13,6 +13,7 @@ class AppRoutes {
   static const String addUser = '/addUser';
   static const String userDetail = '/userDetail';
   static const String resetPassword = '/resetPassword';
+  static const String createTask = '/createTask';
 }
 
 class AppPages {
@@ -24,7 +25,8 @@ class AppPages {
     GetPage(name: AppRoutes.userDetail, page: () => const UserDetailScreen()),
     GetPage(name: AppRoutes.resetPassword, page: () => const ResetPasswordScreen()),
     GetPage(name: AppRoutes.tasksAssigner, page: () => TaskAssignerScreen()),
-    GetPage(name: AppRoutes.tasksSubmission, page: () => const TaskSubmissionScreen()),
+    GetPage(name: AppRoutes.tasksSubmission, page: () => TaskSubmissionScreen()),
+    GetPage(name: AppRoutes.createTask, page: () => const CreateTaskScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),
     // GetPage(name: AppRoutes.compliance, page: () => const ComplianceScreen()),
