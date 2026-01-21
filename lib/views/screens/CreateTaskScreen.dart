@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -238,30 +240,126 @@ class CreateTaskScreen extends StatelessWidget {
                 onChanged: (val) => controller.isWatermark.value = val,
               )),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  controller.pickFiles();
-                },
-                child: Container(
-                  height: 120,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey[400]!),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.cloud_upload_outlined, size: 40, color: Colors.grey),
-                        SizedBox(height: 8),
-                        Text('Click to upload images/videos',
-                            style: TextStyle(color: Colors.grey)),
-                      ],
+              // Upload Section + Display Attachments
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      controller.pickFiles();
+                    },
+                    child: Container(
+                      height: 120,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.grey[400]!),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.cloud_upload_outlined, size: 40, color: Colors.grey),
+                            SizedBox(height: 8),
+                            Text('Click to upload images/videos',
+                                style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 15),
+
+                  // Show uploaded attachments
+                  Obx(() {
+                    if (controller.uploadItems.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.uploadItems.length,
+                        itemBuilder: (context, index) {
+                          final item = controller.uploadItems[index];
+                          final file = item.file;
+                          final fileName = file.name;
+                          final isImage = ['jpg', 'jpeg', 'png'].contains(file.extension?.toLowerCase());
+
+                          return KeyedSubtree(
+                            key: ValueKey(item.id),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: 100,
+                                  margin: const EdgeInsets.only(right: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.grey[300]!),
+                                    color: Colors.grey[100],
+                                  ),
+                                  child: isImage
+                                      ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      File(file.path!),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                      : Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.insert_drive_file, size: 40, color: Colors.grey),
+                                        Text(
+                                          fileName,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                // Upload overlay
+                                Obx(() => item.isUploading.value
+                                    ? Positioned.fill(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                                    : const SizedBox()),
+                                // Delete button
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: GestureDetector(
+                                    onTap: ()=> controller.uploadItems.removeWhere((e) => e.id == item.id),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.red,
+                                      ),
+                                      child: const Icon(Icons.close, size: 20, color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }),
+                ],
               ),
+
               const SizedBox(height: 20),
 
               // Confirm Assignment Button
@@ -269,7 +367,7 @@ class CreateTaskScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton(
-                  onPressed: controller.isLoading.value ? null : controller.createAssignment,
+                  onPressed: (controller.isLoading.value || controller.isUploadingFiles.value) ? null : controller.createAssignment,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: grailGold,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

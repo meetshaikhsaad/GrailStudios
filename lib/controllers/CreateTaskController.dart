@@ -65,40 +65,47 @@ class CreateTaskController extends GetxController {
       isLoadingAssignees.value = false;
     }
   }
-  // Selected files
-  // var selectedFiles = <PlatformFile>[].obs;
-  // var uploadedAttachments = <String>[].obs; // Stores uploaded file URLs
-  var isUploadingFiles = false.obs;
+
 
   /// Pick files using FilePicker
-  // Future<void> pickFiles() async {
-  //   final result = await FilePicker.platform.pickFiles(
-  //     allowMultiple: true,
-  //     type: FileType.custom,
-  //     allowedExtensions: ['jpg', 'jpeg', 'png', 'mp4', 'mov', 'pdf'],
-  //   );
-  //
-  //   if (result != null) {
-  //     selectedFiles.value = result.files;
-  //   }
-  // }
-// Picked files
-  var selectedFiles = <PlatformFile>[].obs;
-  var uploadedAttachments = <Map<String, dynamic>>[].obs;
+  var uploadItems = <UploadItem>[].obs;
+  var isUploadingFiles = false.obs;
+
 
   /// Pick files from device
   Future<void> pickFiles() async {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: ['jpg','jpeg','png','mp4','mov','pdf'],
+      allowedExtensions: ['jpg','jpeg','png'],
     );
 
     if (result != null) {
-      selectedFiles.value = result.files;
-      await uploadSelectedFiles(); // auto-upload after selection
+      isUploadingFiles.value = true;
+
+      for (final file in result.files) {
+        final item = UploadItem(file);
+        uploadItems.add(item);
+        _uploadSingleItem(item);
+      }
     }
   }
+
+  Future<void> _uploadSingleItem(UploadItem item) async {
+    try {
+      final data = await uploadFile(item.file);
+      item.uploadedData = data;
+    } catch (_) {
+      Get.snackbar('Upload Failed', item.file.name, backgroundColor: grailErrorRed);
+    } finally {
+      item.isUploading.value = false;
+
+      if (uploadItems.every((e) => !e.isUploading.value)) {
+        isUploadingFiles.value = false;
+      }
+    }
+  }
+
 
   /// Upload a single file and return URL + metadata
   Future<Map<String, dynamic>> uploadFile(PlatformFile file) async {
@@ -138,31 +145,6 @@ class CreateTaskController extends GetxController {
     }
   }
 
-  /// Upload all selected files
-  Future<void> uploadSelectedFiles() async {
-    if (selectedFiles.isEmpty) return;
-
-    isUploadingFiles.value = true;
-
-    try {
-      uploadedAttachments.clear();
-      for (var file in selectedFiles) {
-        final attachment = await uploadFile(file);
-        uploadedAttachments.add(attachment);
-      }
-      Get.snackbar(
-        'Success',
-        'All files uploaded successfully!',
-        backgroundColor: grailGold,
-        colorText: Colors.white,
-      );
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to upload files', backgroundColor: grailErrorRed);
-    } finally {
-      isUploadingFiles.value = false;
-    }
-  }
-
   /// Helper: determine MIME type based on file extension
   String getMimeType(String? ext) {
     switch (ext?.toLowerCase()) {
@@ -175,67 +157,6 @@ class CreateTaskController extends GetxController {
       default: return 'application/octet-stream';
     }
   }
-
-  // Future<void> pickFiles() async {
-  //   final result = await FilePicker.platform.pickFiles(
-  //     allowMultiple: true,
-  //     type: FileType.custom,
-  //     allowedExtensions: ['jpg', 'jpeg', 'png', 'mp4', 'mov', 'pdf'],
-  //   );
-  //
-  //   if (result != null) {
-  //     selectedFiles.value = result.files;
-  //     await uploadSelectedFiles();
-  //   }
-  // }
-  // // Upload picked files
-  // Future<void> uploadSelectedFiles() async {
-  //   if (selectedFiles.isEmpty) return;
-  //
-  //   isUploadingFiles.value = true;
-  //   uploadedAttachments.clear();
-  //
-  //   try {
-  //     final String accessToken = await ApiService.getAccessToken();
-  //     if (accessToken.isEmpty) throw Exception('No auth token');
-  //
-  //     for (var file in selectedFiles) {
-  //       final uri = Uri.parse('${AppConstants.SERVER_URL}/api/upload/general-upload');
-  //       var request = http.MultipartRequest('POST', uri);
-  //
-  //       request.headers.addAll({
-  //         'Authorization': accessToken,
-  //         'Accept': 'application/json',
-  //       });
-  //
-  //       request.files.add(
-  //         await http.MultipartFile.fromPath(
-  //           'file',
-  //           file.path!,
-  //           contentType: MediaType('image', file.extension ?? 'octet-stream'),
-  //         ),
-  //       );
-  //
-  //       final streamedResponse = await request.send();
-  //       final response = await http.Response.fromStream(streamedResponse);
-  //
-  //       if (response.statusCode == 201) {
-  //         final data = jsonDecode(response.body);
-  //         uploadedAttachments.add(data['url']);
-  //       } else {
-  //         Get.snackbar('Error', 'Upload failed for ${file.name}', backgroundColor: grailErrorRed);
-  //       }
-  //     }
-  //
-  //     if (uploadedAttachments.isNotEmpty) {
-  //       Get.snackbar('Success', 'Files uploaded successfully', backgroundColor: grailGold);
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar('Error', 'Failed to upload files', backgroundColor: grailErrorRed);
-  //   } finally {
-  //     isUploadingFiles.value = false;
-  //   }
-  // }
 
   Future<void> createAssignment() async {
     if (titleController.text.trim().isEmpty) {
@@ -271,7 +192,10 @@ class CreateTaskController extends GetxController {
       "req_face_visible": isFaceVisible.value,
       "req_watermark": isWatermark.value,
       "context": selectedContext.value,
-      "attachments": uploadedAttachments.toList(),
+      "attachments": uploadItems
+          .where((e) => e.uploadedData != null)
+          .map((e) => e.uploadedData)
+          .toList(),
     };
 
     try {
@@ -328,4 +252,13 @@ class CreateTaskController extends GetxController {
     minsController.dispose();
     super.onClose();
   }
+}
+
+class UploadItem {
+  final String id = UniqueKey().toString();
+  final PlatformFile file;
+  RxBool isUploading = true.obs;
+  Map<String, dynamic>? uploadedData;
+
+  UploadItem(this.file);
 }
