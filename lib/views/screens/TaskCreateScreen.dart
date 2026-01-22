@@ -6,8 +6,8 @@ import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
 import '../../controllers/CreateTaskController.dart';
 
-class CreateTaskScreen extends StatelessWidget {
-  const CreateTaskScreen({super.key});
+class TaskAddScreen extends StatelessWidget {
+  const TaskAddScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class CreateTaskScreen extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBarWidget.appBarWave(
-        title: 'Create Assignment',
+        title: 'Add Task',
         scaffoldKey: scaffoldKey,
         notificationVisibility: false,
         showBackButton: true,

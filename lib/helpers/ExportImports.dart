@@ -55,5 +55,6 @@ export 'package:grailstudios/views/screens/UserDetailScreen.dart';
 export 'package:grailstudios/views/screens/ResetPasswordScreen.dart';
 export 'package:grailstudios/views/screens/TaskAssignerScreen.dart';
 export 'package:grailstudios/views/screens/TaskSubmissionScreen.dart';
-export 'package:grailstudios/views/screens/CreateTaskScreen.dart';
-export 'package:grailstudios/views/screens/EditTaskScreen.dart';
+export 'package:grailstudios/views/screens/TaskCreateScreen.dart';
+export 'package:grailstudios/views/screens/TaskEditScreen.dart';
+export 'package:grailstudios/views/screens/TaskChatScreen.dart';

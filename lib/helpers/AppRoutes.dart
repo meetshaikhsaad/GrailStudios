@@ -1,3 +1,5 @@
+import 'package:grailstudios/views/screens/TaskChatScreen.dart';
+
 import '../../helpers/ExportImports.dart';
 
 class AppRoutes {
@@ -13,7 +15,7 @@ class AppRoutes {
   static const String addUser = '/addUser';
   static const String userDetail = '/userDetail';
   static const String resetPassword = '/resetPassword';
-  static const String createTask = '/createTask';
+  static const String taskAdd = '/taskAdd';
 }
 
 class AppPages {
@@ -26,7 +28,7 @@ class AppPages {
     GetPage(name: AppRoutes.resetPassword, page: () => const ResetPasswordScreen()),
     GetPage(name: AppRoutes.tasksAssigner, page: () => TaskAssignerScreen()),
     GetPage(name: AppRoutes.tasksSubmission, page: () => TaskSubmissionScreen()),
-    GetPage(name: AppRoutes.createTask, page: () => const CreateTaskScreen()),
+    GetPage(name: AppRoutes.taskAdd, page: () => const TaskAddScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),
     // GetPage(name: AppRoutes.compliance, page: () => const ComplianceScreen()),

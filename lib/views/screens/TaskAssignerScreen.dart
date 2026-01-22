@@ -49,7 +49,7 @@ class TaskAssignerScreen extends StatelessWidget {
             backgroundColor: grailGold,
             onPressed: () {
               // Directly navigate to the screen
-              Get.toNamed(AppRoutes.createTask);
+              Get.toNamed(AppRoutes.taskAdd);
             },
             child: const Icon(Icons.add, color: Colors.white), // FAB icon
           );
@@ -202,7 +202,7 @@ class TaskAssignerScreen extends StatelessWidget {
                     Navigator.of(context).pop(); // Close sheet
                     // Navigation AFTER sheet is closed
                     Future.microtask(() {
-                      Get.to(() => EditTaskScreen(taskId: task.id!));
+                      Get.to(() => TaskEditScreen(taskId: task.id!));
                     });
                   },
                 ),
@@ -225,7 +225,7 @@ class TaskAssignerScreen extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pop();
                   Future.microtask(() {
-                    // Get.toNamed(AppRoutes.taskChat, arguments: {'taskId': task.id});
+                    Get.to(() => TaskChatScreen(taskId: task.id!));
                   });
                 },
               ),

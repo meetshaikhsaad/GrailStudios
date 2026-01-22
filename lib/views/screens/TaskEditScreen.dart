@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
 
-class EditTaskScreen extends StatelessWidget {
+class TaskEditScreen extends StatelessWidget {
   final int taskId;
 
-  EditTaskScreen({super.key, required this.taskId});
+  TaskEditScreen({super.key, required this.taskId});
 
   final ScrollController _scrollController = ScrollController();
 
