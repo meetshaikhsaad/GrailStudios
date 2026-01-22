@@ -17,6 +17,7 @@ export 'package:grailstudios/helpers/AppRoutes.dart';
 
 //Services
 export 'package:grailstudios/services/ApiService.dart';
+export 'package:grailstudios/services/DownloadService.dart';
 
 //Widgets
 export 'package:grailstudios/views/widgets/InvertedTopCurveClipper.dart';

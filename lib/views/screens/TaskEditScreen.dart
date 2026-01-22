@@ -19,6 +19,7 @@ class TaskEditScreen extends StatelessWidget {
         title: 'Edit Task',
         scaffoldKey: scaffoldKey,
         showBackButton: true,
+        notificationVisibility: false
       ),
       backgroundColor: Colors.white,
       body: Obx(() {
