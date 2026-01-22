@@ -1,86 +1,152 @@
+import 'dart:async';
 import '../../helpers/ExportImports.dart';
 
 class TaskChatController extends GetxController {
   final int taskId;
   TaskChatController({required this.taskId});
 
-  var isLoading = true.obs;
-  var hasError = false.obs;
-  var errorMessage = ''.obs;
-  var messages = <ChatMessage>[].obs;
+  final messages = <ChatMessage>[].obs;
+  final isLoading = false.obs;
+  final hasError = false.obs;
+  final errorMessage = ''.obs;
 
   final messageController = TextEditingController();
   final scrollController = ScrollController();
 
-  // Replace with your actual current user ID from auth
-  final int currentUserId = 49; // Example – get from your auth service
+  final int currentUserId = 49;
+
+  int? oldestMessageId;
+  int? newestMessageId;
+
+  bool isFetchingOlder = false;
+  bool isFetchingNewer = false;
+
+  Timer? pollingTimer;
 
   @override
   void onInit() {
     super.onInit();
-    fetchChatMessages();
+    fetchInitialMessages();
+    scrollController.addListener(_onScroll);
+    _startPolling();
   }
 
-  Future<void> fetchChatMessages() async {
-    isLoading.value = true;
-    hasError.value = false;
-
+  /// ---------------- INITIAL LOAD ----------------
+  Future<void> fetchInitialMessages() async {
     try {
+      isLoading.value = true;
+
       final response = await ApiService().callApiWithMap(
-        'tasks/$taskId/chat',
+        'tasks/$taskId/chat?direction=0&last_message_id=0',
         'Get',
         mapData: {},
       );
 
-      if (response != null && response is List) {
-        messages.value = response
-            .map((json) => ChatMessage.fromJson(json, currentUserId))
-            .toList()
-            .reversed
-            .toList(); // Latest at bottom
-        _scrollToBottom();
+      if (response is List && response.isNotEmpty) {
+        final fetched = response
+            .map((e) => ChatMessage.fromJson(e, currentUserId))
+            .toList();
+
+        messages.assignAll(fetched.reversed);
+
+        oldestMessageId = fetched.first.id;
+        newestMessageId = fetched.last.id;
       }
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
+      _scrollToBottom();
     }
   }
 
+  /// ---------------- OLDER MESSAGES ----------------
+  Future<void> fetchOlderMessages() async {
+    if (isFetchingOlder || oldestMessageId == null) return;
+    isFetchingOlder = true;
+
+    try {
+      final response = await ApiService().callApiWithMap(
+        'tasks/$taskId/chat?direction=1&last_message_id=$oldestMessageId',
+        'Get',
+        mapData: {},
+      );
+
+      if (response is List && response.isNotEmpty) {
+        final fetched = response
+            .map((e) => ChatMessage.fromJson(e, currentUserId))
+            .toList();
+
+        oldestMessageId = fetched.first.id;
+
+        messages.addAll(fetched.reversed);
+      }
+    } finally {
+      isFetchingOlder = false;
+    }
+  }
+
+  /// ---------------- NEWER MESSAGES ----------------
+  Future<void> fetchNewerMessages() async {
+    if (isFetchingNewer || newestMessageId == null) return;
+    isFetchingNewer = true;
+
+    try {
+      final response = await ApiService().callApiWithMap(
+        'tasks/$taskId/chat?direction=2&last_message_id=$newestMessageId',
+        'Get',
+        mapData: {},
+      );
+
+      if (response is List && response.isNotEmpty) {
+        final fetched = response
+            .map((e) => ChatMessage.fromJson(e, currentUserId))
+            .toList();
+
+        newestMessageId = fetched.last.id;
+
+        messages.insertAll(0, fetched.reversed);
+        _scrollToBottom();
+      }
+    } finally {
+      isFetchingNewer = false;
+    }
+  }
+
+  /// ---------------- SEND MESSAGE ----------------
   Future<void> sendMessage() async {
     final text = messageController.text.trim();
     if (text.isEmpty) return;
 
-    // Optimistic UI update
-    final tempMsg = ChatMessage(
-      id: DateTime.now().millisecondsSinceEpoch,
-      message: text,
-      createdAt: DateTime.now(),
-      isFromCurrentUser: true,
-      senderName: 'You', // or get real name
-    );
-    messages.insert(0, tempMsg);
-    _scrollToBottom();
-
     messageController.clear();
 
     try {
-      final payload = {"message": text};
-
       await ApiService().callApiWithMap(
         'tasks/$taskId/chat',
         'Post',
-        mapData: payload,
+        mapData: {"message": text},
       );
 
-      // Refresh full chat after send
-      await fetchChatMessages();
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to send message', backgroundColor: Colors.red);
-      // Remove temp message on failure
-      messages.removeWhere((m) => m.id == tempMsg.id);
+      await fetchNewerMessages();
+    } catch (_) {
+      Get.snackbar('Error', 'Message not sent');
     }
+  }
+
+  /// ---------------- SCROLL HANDLING ----------------
+  void _onScroll() {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      fetchOlderMessages();
+    }
+  }
+
+  /// ---------------- POLLING ----------------
+  void _startPolling() {
+    pollingTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      fetchNewerMessages();
+    });
   }
 
   void _scrollToBottom() {
@@ -93,8 +159,9 @@ class TaskChatController extends GetxController {
 
   @override
   void onClose() {
-    messageController.dispose();
+    pollingTimer?.cancel();
     scrollController.dispose();
+    messageController.dispose();
     super.onClose();
   }
 }
