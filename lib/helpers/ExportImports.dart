@@ -31,6 +31,7 @@ export 'package:grailstudios/models/Manager.dart';
 export 'package:grailstudios/models/DigitalCreator.dart';
 export 'package:grailstudios/models/Task.dart';
 export 'package:grailstudios/models/TaskAssignee.dart';
+export 'package:grailstudios/models/ChatMessages.dart';
 
 //controller
 export 'package:grailstudios/controllers/LoginController.dart';
@@ -40,8 +41,9 @@ export 'package:grailstudios/controllers/AddUserController.dart';
 export 'package:grailstudios/controllers/UserDetailController.dart';
 export 'package:grailstudios/controllers/TaskAssignerController.dart';
 export 'package:grailstudios/controllers/TaskSubmissionController.dart';
-export 'package:grailstudios/controllers/CreateTaskController.dart';
-export 'package:grailstudios/controllers/EditTaskController.dart';
+export 'package:grailstudios/controllers/TaskAddController.dart';
+export 'package:grailstudios/controllers/TaskEditController.dart';
+export 'package:grailstudios/controllers/TaskChatController.dart';
 
 
 //Screens

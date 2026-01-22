@@ -1,17 +1,13 @@
 import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
-import '../../controllers/CreateTaskController.dart';
 
 class TaskAddScreen extends StatelessWidget {
   const TaskAddScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final CreateTaskController controller = Get.put(CreateTaskController());
+    final TaskAddController controller = Get.put(TaskAddController());
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 

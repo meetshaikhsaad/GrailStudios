@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
 
@@ -13,7 +10,7 @@ class TaskEditScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EditTaskController controller = Get.put(EditTaskController(taskId: taskId));
+    final TaskEditController controller = Get.put(TaskEditController(taskId: taskId));
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(

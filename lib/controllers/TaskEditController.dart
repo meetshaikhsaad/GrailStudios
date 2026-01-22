@@ -1,9 +1,9 @@
 import '../../helpers/ExportImports.dart';
 
-class EditTaskController extends GetxController {
+class TaskEditController extends GetxController {
   final int taskId;
 
-  EditTaskController({required this.taskId});
+  TaskEditController({required this.taskId});
 
   var isLoading = true.obs;
   var hasError = false.obs;

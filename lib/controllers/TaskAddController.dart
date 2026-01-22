@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
 
-class CreateTaskController extends GetxController {
+class TaskAddController extends GetxController {
   // Text Controllers
   final titleController = TextEditingController();
   final instructionsController = TextEditingController();
