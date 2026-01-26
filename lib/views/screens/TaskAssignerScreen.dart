@@ -461,25 +461,24 @@ class TaskAssignerScreen extends StatelessWidget {
                                 ),
                               ),
                             )),
-                            const SizedBox(height: 30),
-
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: grailGold,
-                                minimumSize: const Size.fromHeight(45),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30)),
-                              ),
-                              icon: const Icon(Icons.chat, color: Colors.white),
-                              label: const Text('Open Chat', style: TextStyle(color: Colors.white)),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                Future.microtask(() {
-                                  Get.to(() => TaskChatScreen(taskId: task.id!));
-                                });
-                              },
-                            ),
                           ],
+                          const SizedBox(height: 30),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: grailGold,
+                              minimumSize: const Size.fromHeight(45),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                            ),
+                            icon: const Icon(Icons.chat, color: Colors.white),
+                            label: const Text('Open Chat', style: TextStyle(color: Colors.white)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Future.microtask(() {
+                                Get.to(() => TaskChatScreen(taskId: task.id!));
+                              });
+                            },
+                          ),
                         ],
                       ),
                     ),

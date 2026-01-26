@@ -45,6 +45,7 @@ export 'package:grailstudios/controllers/TaskSubmissionController.dart';
 export 'package:grailstudios/controllers/TaskAddController.dart';
 export 'package:grailstudios/controllers/TaskEditController.dart';
 export 'package:grailstudios/controllers/TaskChatController.dart';
+export 'package:grailstudios/controllers/TaskSubmissionUploadController.dart';
 
 
 //Screens
@@ -61,3 +62,4 @@ export 'package:grailstudios/views/screens/TaskSubmissionScreen.dart';
 export 'package:grailstudios/views/screens/TaskCreateScreen.dart';
 export 'package:grailstudios/views/screens/TaskEditScreen.dart';
 export 'package:grailstudios/views/screens/TaskChatScreen.dart';
+export 'package:grailstudios/views/screens/TaskSubmissionUploadScreen.dart';
