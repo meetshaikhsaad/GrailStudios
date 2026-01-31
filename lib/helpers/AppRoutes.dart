@@ -1,5 +1,3 @@
-import 'package:grailstudios/views/screens/TaskChatScreen.dart';
-
 import '../../helpers/ExportImports.dart';
 
 class AppRoutes {
@@ -9,7 +7,7 @@ class AppRoutes {
   static const String tasksAssigner = '/tasks-assigner';
   static const String tasksSubmission = '/tasks-submission';
   static const String signatureAssigner = '/signature-assigner';
-  static const String signatureSubmission = '/signature-submission';
+  static const String signatureSigner = '/signature-signer';
   static const String contentVault = '/content-vault';
   static const String compliance = '/compliance';
   static const String reports = '/reports';
@@ -33,7 +31,7 @@ class AppPages {
     GetPage(name: AppRoutes.tasksSubmission, page: () => TaskSubmissionScreen()),
     GetPage(name: AppRoutes.taskAdd, page: () => const TaskAddScreen()),
     GetPage(name: AppRoutes.signatureAssigner, page: () => SignatureAssignerScreen()),
-    GetPage(name: AppRoutes.signatureSubmission, page: () => TaskSubmissionScreen()),
+    GetPage(name: AppRoutes.signatureSigner, page: () => SignatureSignerScreen()),
     GetPage(name: AppRoutes.signatureAdd, page: () => SignatureAddScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),

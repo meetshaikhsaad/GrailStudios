@@ -13,6 +13,9 @@ class SignatureAssignerController extends GetxController {
   final int _limit = 10;
   bool _hasMore = true;
 
+  // status options
+  final List<String> statusOptions = ['All', 'Pending', 'Signed', 'Expired'];
+
   @override
   void onInit() {
     super.onInit();

@@ -75,3 +75,4 @@ export 'package:grailstudios/views/screens/SignatureAssignerScreen.dart';
 export 'package:grailstudios/views/screens/SignatureAddScreen.dart';
 export 'package:grailstudios/views/screens/SignatureViewScreen.dart';
 export 'package:grailstudios/views/screens/SignatureEditScreen.dart';
+export 'package:grailstudios/views/screens/SignatureSignerScreen.dart';
