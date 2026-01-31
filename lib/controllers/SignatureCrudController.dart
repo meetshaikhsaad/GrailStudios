@@ -40,6 +40,11 @@ class SignatureCrudController extends GetxController {
     fetchSignatureDetails(id);
   }
 
+  void removeDocument() {
+    uploadedDocumentUrl.value = '';
+    selectedFile = null;
+  }
+
   // ================= FETCH SIGNERS =================
   Future<void> fetchSigners() async {
     isLoadingSigners.value = true;
@@ -219,7 +224,7 @@ class SignatureCrudController extends GetxController {
         mapData: payload,
       );
 
-      Get.back(result: true);
+      Get.offAllNamed(AppRoutes.signatureAssigner);
       Get.snackbar('Updated', 'Signature updated',
           backgroundColor: grailGold, colorText: Colors.white);
     } catch (_) {

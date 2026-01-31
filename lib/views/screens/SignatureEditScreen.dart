@@ -110,6 +110,85 @@ class SignatureEditScreen extends StatelessWidget {
                   }
                 },
               ),
+
+              const SizedBox(height: 20),
+
+// ---------------- Attachment ----------------
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Attachment',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Obx(() {
+                // ---------------- NO DOCUMENT ----------------
+                if (controller.uploadedDocumentUrl.isEmpty) {
+                  return GestureDetector(
+                    onTap: controller.pickDocument,
+                    child: Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.grey[400]!),
+                      ),
+                      child: Center(
+                        child: controller.isUploading.value
+                            ? const CircularProgressIndicator()
+                            : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.upload_file,
+                                size: 40, color: Colors.grey),
+                            const SizedBox(height: 8),
+                            Text(
+                              controller.uploadedDocumentUrl.isNotEmpty
+                                  ? 'Document Uploaded'
+                                  : 'Upload Document (PDF/DOC)',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                // ---------------- DOCUMENT PREVIEW ----------------
+                return Stack(
+                  children: [
+                    _attachmentPreview(controller.uploadedDocumentUrl.value),
+
+                    // ❌ DELETE ICON
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: controller.removeDocument,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+
               const SizedBox(height: 40),
 
               // ---------------- Save Button ----------------
@@ -131,7 +210,7 @@ class SignatureEditScreen extends StatelessWidget {
                     color: Colors.white,
                   )
                       : const Text(
-                    'Save Changes',
+                    'Update Signature',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -161,4 +240,32 @@ class SignatureEditScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _attachmentPreview(String url) {
+    final ext = url.split('.').last.toLowerCase();
+
+    if (['png', 'jpg', 'jpeg', 'gif'].contains(ext)) {
+      // Image Preview
+      return Container(
+        height: 250,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[200],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: PhotoView(
+            imageProvider: NetworkImage(url),
+            backgroundDecoration: const BoxDecoration(color: Colors.transparent),
+          ),
+        ),
+      );
+    }
+    else if (['pdf', 'docx'].contains(ext)) {
+      return InlineDocumentPreview(url: url);
+    }
+
+    return const Text('Unsupported attachment type.');
+  }
+
 }

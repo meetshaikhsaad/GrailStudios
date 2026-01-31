@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
+import '../widgets/DocumentView.dart';
 
 class SignatureViewScreen extends StatelessWidget {
   final Signature signature;
@@ -152,7 +153,6 @@ class SignatureViewScreen extends StatelessWidget {
     }
   }
 
-  // ================= ATTACHMENT PREVIEW =================
   Widget _attachmentPreview(String url) {
     final ext = url.split('.').last.toLowerCase();
 
@@ -172,49 +172,13 @@ class SignatureViewScreen extends StatelessWidget {
           ),
         ),
       );
-    } else {
-      // Get.to(() => DocumentViewerScreen(url: url));
-      // Other documents (Word, Excel, etc.) - open externally
-      return GestureDetector(
-        onTap: () => Get.to(() => DocumentViewerScreen(url: url)),
-        child: Container(
-          height: 80,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(_getAttachmentIcon(url), color: grailGold),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  url.split('/').last,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.download, color: Colors.red),
-                onPressed: () async {
-                  final fileName = url.split('/').last;
-                  await DownloadService.instance.downloadFile(url, fileName);
-                },
-              ),
-            ],
-          ),
-        ),
-      );
     }
+    else if (['pdf', 'docx'].contains(ext)) {
+      return InlineDocumentPreview(url: url);
+    }
+
+    return const Text('Unsupported attachment type.');
   }
 
-  IconData _getAttachmentIcon(String url) {
-    final ext = url.split('.').last.toLowerCase();
-    if (['png', 'jpg', 'jpeg', 'gif'].contains(ext)) return Icons.image;
-    if (ext == 'pdf') return Icons.picture_as_pdf;
-    if (['doc', 'docx'].contains(ext)) return Icons.description;
-    if (['xls', 'xlsx'].contains(ext)) return Icons.grid_on;
-    return Icons.insert_drive_file;
-  }
 }
+

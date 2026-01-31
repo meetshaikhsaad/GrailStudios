@@ -27,6 +27,7 @@ export 'package:grailstudios/views/widgets/AppBarWidget.dart';
 export 'package:grailstudios/views/widgets/UserCard.dart';
 export 'package:grailstudios/views/widgets/TaskCard.dart';
 export 'package:grailstudios/views/widgets/SignatureCard.dart';
+export 'package:grailstudios/views/widgets/DocumentView.dart';
 
 //models
 export 'package:grailstudios/models/ActiveUser.dart';
@@ -74,4 +75,3 @@ export 'package:grailstudios/views/screens/SignatureAssignerScreen.dart';
 export 'package:grailstudios/views/screens/SignatureAddScreen.dart';
 export 'package:grailstudios/views/screens/SignatureViewScreen.dart';
 export 'package:grailstudios/views/screens/SignatureEditScreen.dart';
-export 'package:grailstudios/views/screens/DocumentViewer.dart';
