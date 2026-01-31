@@ -42,17 +42,15 @@ print("email2: " + email.value);
   }
 
   Future<void> login() async {
-    // if (!validate()) return;
+    if (!validate()) return;
     emailError.value = '';
     passwordError.value = '';
 
     isLoading.value = true;
 
     final user = await ApiService.login(
-      // email: email.value,
-      email: "saadmanager@gmail.com",
-      // password: password.value,
-      password: "saad4321",
+      email: email.value,
+      password: password.value,
     );
 
     isLoading.value = false;
