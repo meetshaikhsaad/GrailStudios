@@ -589,8 +589,6 @@ class TaskAssignerScreen extends StatelessWidget {
     }
   }
 
-
-
 // Helper for status chips
   Widget _statusChip(String label, Color color) {
     return Container(

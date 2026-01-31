@@ -4,6 +4,8 @@ export 'package:flutter/services.dart';
 export 'dart:async';
 export 'dart:convert';
 export 'dart:typed_data';
+export 'package:photo_view/photo_view.dart';
+
 
 //Packages
 export 'package:get/get.dart';
@@ -24,6 +26,7 @@ export 'package:grailstudios/views/widgets/InvertedTopCurveClipper.dart';
 export 'package:grailstudios/views/widgets/AppBarWidget.dart';
 export 'package:grailstudios/views/widgets/UserCard.dart';
 export 'package:grailstudios/views/widgets/TaskCard.dart';
+export 'package:grailstudios/views/widgets/SignatureCard.dart';
 
 //models
 export 'package:grailstudios/models/ActiveUser.dart';
@@ -33,6 +36,7 @@ export 'package:grailstudios/models/DigitalCreator.dart';
 export 'package:grailstudios/models/Task.dart';
 export 'package:grailstudios/models/TaskAssignee.dart';
 export 'package:grailstudios/models/ChatMessages.dart';
+export 'package:grailstudios/models/Signature.dart';
 
 //controller
 export 'package:grailstudios/controllers/LoginController.dart';
@@ -46,6 +50,9 @@ export 'package:grailstudios/controllers/TaskAddController.dart';
 export 'package:grailstudios/controllers/TaskEditController.dart';
 export 'package:grailstudios/controllers/TaskChatController.dart';
 export 'package:grailstudios/controllers/TaskSubmissionUploadController.dart';
+export 'package:grailstudios/controllers/SignatureAssignerController.dart';
+// export 'package:grailstudios/controllers/SignatureAddController.dart';
+export 'package:grailstudios/controllers/SignatureCrudController.dart';
 
 
 //Screens
@@ -63,3 +70,8 @@ export 'package:grailstudios/views/screens/TaskCreateScreen.dart';
 export 'package:grailstudios/views/screens/TaskEditScreen.dart';
 export 'package:grailstudios/views/screens/TaskChatScreen.dart';
 export 'package:grailstudios/views/screens/TaskSubmissionUploadScreen.dart';
+export 'package:grailstudios/views/screens/SignatureAssignerScreen.dart';
+export 'package:grailstudios/views/screens/SignatureAddScreen.dart';
+export 'package:grailstudios/views/screens/SignatureViewScreen.dart';
+export 'package:grailstudios/views/screens/SignatureEditScreen.dart';
+export 'package:grailstudios/views/screens/DocumentViewer.dart';

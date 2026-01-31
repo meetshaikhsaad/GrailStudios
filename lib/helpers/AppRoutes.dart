@@ -8,6 +8,8 @@ class AppRoutes {
   static const String usersRoles = '/users-roles';
   static const String tasksAssigner = '/tasks-assigner';
   static const String tasksSubmission = '/tasks-submission';
+  static const String signatureAssigner = '/signature-assigner';
+  static const String signatureSubmission = '/signature-submission';
   static const String contentVault = '/content-vault';
   static const String compliance = '/compliance';
   static const String reports = '/reports';
@@ -16,6 +18,7 @@ class AppRoutes {
   static const String userDetail = '/userDetail';
   static const String resetPassword = '/resetPassword';
   static const String taskAdd = '/taskAdd';
+  static const String signatureAdd = '/signatureAdd';
 }
 
 class AppPages {
@@ -29,6 +32,9 @@ class AppPages {
     GetPage(name: AppRoutes.tasksAssigner, page: () => TaskAssignerScreen()),
     GetPage(name: AppRoutes.tasksSubmission, page: () => TaskSubmissionScreen()),
     GetPage(name: AppRoutes.taskAdd, page: () => const TaskAddScreen()),
+    GetPage(name: AppRoutes.signatureAssigner, page: () => SignatureAssignerScreen()),
+    GetPage(name: AppRoutes.signatureSubmission, page: () => TaskSubmissionScreen()),
+    GetPage(name: AppRoutes.signatureAdd, page: () => SignatureAddScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),
     // GetPage(name: AppRoutes.compliance, page: () => const ComplianceScreen()),
