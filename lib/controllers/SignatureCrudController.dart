@@ -290,8 +290,9 @@ class SignatureCrudController extends GetxController {
         'POST',
         mapData: payload,
       );
-
-      Get.offAllNamed(AppRoutes.signatureAssigner);
+      Get.back();
+      final signatureController = Get.find<SignatureAssignerController>();
+      signatureController.fetchSignatures();
       Get.snackbar('Success', 'Signature submitted',
           backgroundColor: grailGold, colorText: Colors.white);
     } catch (_) {
