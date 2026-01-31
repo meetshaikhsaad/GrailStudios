@@ -114,16 +114,21 @@ class SignatureEditScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
 // ---------------- Attachment ----------------
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Attachment',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Attachment',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
-                ),
+                  IconButton(
+                    icon: const Icon(Icons.download_rounded),
+                    color: grailGold, // or any color you like
+                    onPressed: () {
+                      _downloadAttachment(controller.signature.value!.documentUrl, context: context); // call your function here
+                    },
+                  ),
+                ],
               ),
 
               const SizedBox(height: 12),
@@ -267,5 +272,26 @@ class SignatureEditScreen extends StatelessWidget {
 
     return const Text('Unsupported attachment type.');
   }
+
+  Future<void> _downloadAttachment(String url, {BuildContext? context}) async {
+    try {
+      final fileName = url.split('/').last;
+
+      // Use the DownloadService
+      await DownloadService.instance.downloadFile(
+        url,
+        fileName,
+        context: context,
+      );
+    } catch (e) {
+      if (context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Download failed: $e")),
+        );
+      }
+      print("Download failed: $e");
+    }
+  }
+
 
 }
