@@ -259,11 +259,55 @@ class SignatureCrudController extends GetxController {
     }
   }
 
+  // ================= SIGNING =================
+  final legalNameController = TextEditingController();
+  var isAgreementChecked = false.obs;
+  var isSigning = false.obs;
+
+// ================= SIGN SIGNATURE =================
+  Future<void> signSignature(int id) async {
+    if (legalNameController.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Please enter your full legal name',
+          backgroundColor: grailErrorRed);
+      return;
+    }
+
+    if (!isAgreementChecked.value) {
+      Get.snackbar('Error', 'You must agree to the terms',
+          backgroundColor: grailErrorRed);
+      return;
+    }
+
+    isSigning.value = true;
+
+    final payload = {
+      "legal_name": legalNameController.text.trim(),
+    };
+
+    try {
+      await ApiService().callApiWithMap(
+        'signature/$id/sign',
+        'POST',
+        mapData: payload,
+      );
+
+      Get.offAllNamed(AppRoutes.signatureAssigner);
+      Get.snackbar('Success', 'Signature submitted',
+          backgroundColor: grailGold, colorText: Colors.white);
+    } catch (_) {
+      Get.snackbar('Error', 'Failed to submit signature',
+          backgroundColor: grailErrorRed);
+    } finally {
+      isSigning.value = false;
+    }
+  }
+
   @override
   void onClose() {
     titleController.dispose();
     descriptionController.dispose();
     deadlineController.dispose();
+    legalNameController.dispose();
     super.onClose();
   }
 }

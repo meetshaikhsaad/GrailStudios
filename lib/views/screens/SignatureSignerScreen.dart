@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
 
 class SignatureSignerScreen extends StatelessWidget {
@@ -116,7 +115,7 @@ class SignatureSignerScreen extends StatelessWidget {
   void _viewSignature(Signature signature) {
     // Navigate to details / preview screen
     Future.microtask(() {
-      Get.to(() => SignatureViewScreen(signature: signature));
+      Get.to(() => SignatureSignSubmitScreen(signature: signature));
     });
   }
 
