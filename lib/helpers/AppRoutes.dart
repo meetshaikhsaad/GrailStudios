@@ -33,6 +33,7 @@ class AppPages {
     GetPage(name: AppRoutes.signatureAssigner, page: () => SignatureAssignerScreen()),
     GetPage(name: AppRoutes.signatureSigner, page: () => SignatureSignerScreen()),
     GetPage(name: AppRoutes.signatureAdd, page: () => SignatureAddScreen()),
+    GetPage(name: AppRoutes.contentVault, page: () => ContentVaultScreen()),
     // GetPage(name: AppRoutes.tasks, page: () => const TasksScreen()),
     // GetPage(name: AppRoutes.contentVault, page: () => const ContentVaultScreen()),
     // GetPage(name: AppRoutes.compliance, page: () => const ComplianceScreen()),

@@ -47,6 +47,7 @@ dependencies:
   photo_view: ^0.15.0
   flutter_pdfview: ^1.4.4
   docx_file_viewer: ^1.0.1
+  video_player: ^2.10.1
 
 dev_dependencies:
   flutter_test:

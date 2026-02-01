@@ -113,7 +113,8 @@ class AppBarWidget {
                     if (user?.role == 'digital_creator' )
                       _drawerItem(Icons.assignment_outlined, 'Signature Signer', AppRoutes.signatureSigner, scaffoldKey),
 
-                    // _drawerItem(Icons.folder_open_outlined, 'Content Vault', AppRoutes.contentVault, scaffoldKey),
+                    if (user?.role == 'manager' || user?.role == 'admin')
+                      _drawerItem(Icons.folder_open_outlined, 'Content Vault', AppRoutes.contentVault, scaffoldKey),
                     // _drawerItem(Icons.verified_user_outlined, 'Compliance', AppRoutes.compliance, scaffoldKey),
                     // _drawerItem(Icons.bar_chart_outlined, 'Reports', AppRoutes.reports, scaffoldKey),
                     ExpansionTile(

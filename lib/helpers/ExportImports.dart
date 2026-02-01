@@ -38,6 +38,7 @@ export 'package:grailstudios/models/Task.dart';
 export 'package:grailstudios/models/TaskAssignee.dart';
 export 'package:grailstudios/models/ChatMessages.dart';
 export 'package:grailstudios/models/Signature.dart';
+export 'package:grailstudios/models/ContentVaultFile.dart';
 
 //controller
 export 'package:grailstudios/controllers/LoginController.dart';
@@ -52,8 +53,9 @@ export 'package:grailstudios/controllers/TaskEditController.dart';
 export 'package:grailstudios/controllers/TaskChatController.dart';
 export 'package:grailstudios/controllers/TaskSubmissionUploadController.dart';
 export 'package:grailstudios/controllers/SignatureAssignerController.dart';
-// export 'package:grailstudios/controllers/SignatureAddController.dart';
 export 'package:grailstudios/controllers/SignatureCrudController.dart';
+export 'package:grailstudios/controllers/ContentVaultController.dart';
+export 'package:grailstudios/controllers/ContentVaultDetailsController.dart';
 
 
 //Screens
@@ -77,3 +79,6 @@ export 'package:grailstudios/views/screens/SignatureViewScreen.dart';
 export 'package:grailstudios/views/screens/SignatureEditScreen.dart';
 export 'package:grailstudios/views/screens/SignatureSignerScreen.dart';
 export 'package:grailstudios/views/screens/SignatureSignSubmitScreen.dart';
+export 'package:grailstudios/views/screens/ContentVaultScreen.dart';
+export 'package:grailstudios/views/screens/ContentVaultDetailsScreen.dart';
+export 'package:grailstudios/views/screens/ContentVaultViewerScreen.dart';
