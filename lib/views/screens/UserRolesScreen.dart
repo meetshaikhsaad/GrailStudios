@@ -213,67 +213,24 @@ class UsersRolesScreen extends StatelessWidget {
               if (!snapshot.hasData) return const SizedBox();
 
               final loggedInRole = snapshot.data;
+              final List<Map<String, String>> statusOptions = [
+                {'label': 'All', 'value': ''},
+                if (loggedInRole == 'admin')
+                  {'label': 'Admins', 'value': 'admin'},
+                if (loggedInRole == 'admin' || loggedInRole == 'manager' )
+                  {'label': 'Team Members', 'value': 'team_member'},
+                if (loggedInRole == 'admin' || loggedInRole == 'manager' || loggedInRole == 'team_member')
+                  {'label': 'Models', 'value': 'digital_creator'},
+              ];
+              return Obx(() => HorizontalFilterChips(
+                options: statusOptions,
+                selectedValue: controller.selectedRole.value,
+                onSelectionChanged: (val) {
+                  controller.selectedRole.value = val;
+                  controller.refreshUsers();
+                },
+              ));
 
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    // All
-                    Obx(() => _filterChip(
-                      'All',
-                      controller.selectedRole.value.isEmpty,
-                          () {
-                        controller.selectedRole.value = '';
-                        controller.refreshUsers();
-                      },
-                    )),
-
-                    // Admins (only if logged-in user is admin)
-                    if (loggedInRole == 'admin')
-                      Obx(() => _filterChip(
-                        'Admins',
-                        controller.selectedRole.value == 'admin',
-                            () {
-                          controller.selectedRole.value = 'admin';
-                          controller.refreshUsers();
-                        },
-                      )),
-
-                    // Managers
-                    if (loggedInRole == 'admin')
-                    Obx(() => _filterChip(
-                      'Managers',
-                      controller.selectedRole.value == 'manager',
-                          () {
-                        controller.selectedRole.value = 'manager';
-                        controller.refreshUsers();
-                      },
-                    )),
-
-                    if (loggedInRole == 'admin' || loggedInRole == 'manager' )
-                    Obx(() => _filterChip(
-                      'Team Members',
-                      controller.selectedRole.value == 'team_member',
-                          () {
-                        controller.selectedRole.value = 'team_member';
-                        controller.refreshUsers();
-                      },
-                    )),
-
-                    // Models
-                    if (loggedInRole == 'admin' || loggedInRole == 'manager' || loggedInRole == 'team_member')
-                    Obx(() => _filterChip(
-                      'Models',
-                      controller.selectedRole.value == 'digital_creator',
-                          () {
-                        controller.selectedRole.value = 'digital_creator';
-                        controller.refreshUsers();
-                      },
-                    )),
-                  ],
-                ),
-              );
             },
           ),
           const SizedBox(height: 10),

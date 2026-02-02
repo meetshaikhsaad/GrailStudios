@@ -23,6 +23,7 @@ class SignatureAssignerScreen extends StatelessWidget {
     });
 
     return Scaffold(
+      backgroundColor: screensBackground,
       key: scaffoldKey,
       appBar: AppBarWidget.appBarWave(
         title: 'Signature Assign',
@@ -74,26 +75,14 @@ class SignatureAssignerScreen extends StatelessWidget {
           ),
 
           // Status Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Obx(() => Row(
-              children: controller.statusOptions.map((status) {
-                final isSelected =
-                    controller.selectedStatus.value == status ||
-                        (status == 'All' &&
-                            controller.selectedStatus.value.isEmpty);
-
-                return _filterChip(status, isSelected, () {
-                  controller.onStatusChanged(
-                    status == 'All' ? '' : status,
-                  );
-                });
-              }).toList(),
-            )),
-          ),
-
-          const SizedBox(height: 12),
+          Obx(() => HorizontalFilterChips(
+            options: controller.statusOptionsMap,
+            selectedValue: controller.selectedStatus.value,
+            onSelectionChanged: (val) {
+              controller.selectedStatus.value = val;
+              controller.onStatusChanged(val); // fetch / filter tasks
+            },
+          )),
 
           // List
           Expanded(
@@ -244,20 +233,4 @@ class SignatureAssignerScreen extends StatelessWidget {
     );
   }
 
-  // ================= UI HELPERS =================
-
-  Widget _filterChip(String label, bool isSelected, VoidCallback onTap) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: isSelected,
-        selectedColor: grailGold,
-        backgroundColor: Colors.grey[200],
-        labelStyle:
-        TextStyle(color: isSelected ? Colors.white : Colors.black),
-        onSelected: (_) => onTap(),
-      ),
-    );
-  }
 }

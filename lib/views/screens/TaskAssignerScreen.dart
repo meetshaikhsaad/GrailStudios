@@ -13,7 +13,14 @@ class TaskAssignerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TaskAssignerController controller = Get.put(TaskAssignerController());
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final List<String> statusOptions = ['All', 'To Do', 'Blocked', 'Completed', 'Missed'];
+    final List<Map<String, String>> statusOptions = [
+      {'label': 'All', 'value': ''},           // All → empty string
+      {'label': 'To Do', 'value': 'To Do'},
+      {'label': 'Blocked', 'value': 'Blocked'},
+      {'label': 'Completed', 'value': 'Completed'},
+      {'label': 'Missed', 'value': 'Missed'},
+    ];
+
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -55,7 +62,7 @@ class TaskAssignerScreen extends StatelessWidget {
       ),
 
       drawer: AppBarWidget.appDrawer(scaffoldKey),
-      backgroundColor: Colors.white,
+      backgroundColor: screensBackground,
       body: Column(
         children: [
           // Search Bar + Filter Icon
@@ -92,25 +99,15 @@ class TaskAssignerScreen extends StatelessWidget {
           ),
 
           // Filter Chips (static for now)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Obx(() => Row(
-              children: statusOptions.map((status) {
-                final isSelected = controller.selectedStatus.value == status ||
-                    (status == 'All' && controller.selectedStatus.value.isEmpty);
+          Obx(() => HorizontalFilterChips(
+            options: statusOptions,
+            selectedValue: controller.selectedStatus.value,
+            onSelectionChanged: (val) {
+              controller.selectedStatus.value = val; // '' for All
+              controller.fetchTasks(); // fetch filtered tasks
+            },
+          )),
 
-                return _filterChip(status, isSelected, () {
-                  if (status == 'All') {
-                    controller.selectedStatus.value = '';
-                  } else {
-                    controller.selectedStatus.value = status;
-                  }
-                  controller.fetchTasks(); // fetch filtered tasks
-                });
-              }).toList(),
-            )),
-          ),
 
           const SizedBox(height: 16),
 
@@ -618,19 +615,4 @@ class TaskAssignerScreen extends StatelessWidget {
     }
   }
 
-
-  Widget _filterChip(String label, bool isSelected, VoidCallback onTap) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: ChoiceChip(
-        label: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-        selected: isSelected,
-        selectedColor: grailGold,
-        backgroundColor: Colors.grey[200],
-        labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black87),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30), side: BorderSide.none),
-        onSelected: (_) => onTap(),
-      ),
-    );
-  }
 }

@@ -13,7 +13,13 @@ class TaskSubmissionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TaskSubmissionController controller = Get.put(TaskSubmissionController());
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final List<String> statusOptions = ['All', 'To Do', 'Blocked', 'Completed', 'Missed'];
+    final List<Map<String, String>> statusOptions = [
+      {'label': 'All', 'value': ''},           // All → empty string
+      {'label': 'To Do', 'value': 'To Do'},
+      {'label': 'Blocked', 'value': 'Blocked'},
+      {'label': 'Completed', 'value': 'Completed'},
+      {'label': 'Missed', 'value': 'Missed'},
+    ];
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -31,7 +37,7 @@ class TaskSubmissionScreen extends StatelessWidget {
         showBackButton: false,
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
-      backgroundColor: Colors.white,
+      backgroundColor: screensBackground,
       body: Column(
         children: [
           // Search Bar + Filter Icon
@@ -55,38 +61,26 @@ class TaskSubmissionScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                IconButton(
-                  icon: const Icon(Icons.filter_list, color: grailGold),
-                  onPressed: () {
-                    // TODO: Open filter bottom sheet for status/assignee
-                    Get.snackbar('Filters', 'Filter options coming soon!');
-                  },
-                ),
+                // const SizedBox(width: 12),
+                // IconButton(
+                //   icon: const Icon(Icons.filter_list, color: grailGold),
+                //   onPressed: () {
+                //     // TODO: Open filter bottom sheet for status/assignee
+                //     Get.snackbar('Filters', 'Filter options coming soon!');
+                //   },
+                // ),
               ],
             ),
           ),
 
-          // Filter Chips (static for now)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Obx(() => Row(
-              children: statusOptions.map((status) {
-                final isSelected = controller.selectedStatus.value == status ||
-                    (status == 'All' && controller.selectedStatus.value.isEmpty);
-
-                return _filterChip(status, isSelected, () {
-                  if (status == 'All') {
-                    controller.selectedStatus.value = '';
-                  } else {
-                    controller.selectedStatus.value = status;
-                  }
-                  controller.fetchTasks(); // fetch filtered tasks
-                });
-              }).toList(),
-            )),
-          ),
+          Obx(() => HorizontalFilterChips(
+            options: statusOptions,
+            selectedValue: controller.selectedStatus.value,
+            onSelectionChanged: (val) {
+              controller.selectedStatus.value = val; // '' for All
+              controller.fetchTasks(); // fetch filtered tasks
+            },
+          )),
 
           const SizedBox(height: 16),
 

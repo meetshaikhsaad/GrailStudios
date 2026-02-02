@@ -14,7 +14,13 @@ class SignatureAssignerController extends GetxController {
   bool _hasMore = true;
 
   // status options
-  final List<String> statusOptions = ['All', 'Pending', 'Signed', 'Expired'];
+  final List<Map<String, String>> statusOptionsMap  = [
+    {'label': 'All', 'value': ''},
+    {'label': 'Pending', 'value': 'Pending'},
+    {'label': 'Signed', 'value': 'Signed'},
+    {'label': 'Expired', 'value': 'Expired'},
+  ];
+
 
   @override
   void onInit() {

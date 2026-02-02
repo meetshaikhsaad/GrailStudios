@@ -7,6 +7,7 @@ class AppBarWidget {
       future: ApiService.getSavedUser(),
       builder: (context, snapshot) {
         final user = snapshot.data?.user;
+        String userRole = user!.role;
 
         return Drawer(
           backgroundColor: const Color(0xFFF7F7F7),
@@ -47,11 +48,10 @@ class AppBarWidget {
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
                   child: Row(
                     children: [
-                      CircleAvatar(
+                      modelAvatar(
+                        imageUrl: user?.profilePictureUrl,
+                        name: user!.fullName, // or fullName / username
                         radius: 28,
-                        backgroundImage: user?.profilePictureUrl != null && user!.profilePictureUrl!.isNotEmpty
-                            ? NetworkImage(user.profilePictureUrl!)
-                            : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -64,7 +64,7 @@ class AppBarWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(color: const Color(0xFFEFF4FF), borderRadius: BorderRadius.circular(12)),
                               child: Text(
-                                user?.role ?? 'ADMIN',
+                                roleLabel(user!.role),
                                 style: const TextStyle(fontSize: 12, color: Color(0xFF3A7AFE), fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -100,20 +100,20 @@ class AppBarWidget {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
+                    
                     _drawerItem(Icons.home_outlined, 'Dashboard', AppRoutes.dashboard, scaffoldKey),
-                    if (user?.role == 'admin' || user?.role == 'manager')
+                    if (userRole == 'admin' || userRole == 'manager')
                       _drawerItem(Icons.people_outline, 'Users', AppRoutes.usersRoles, scaffoldKey),
-                    if (user?.role == 'manager' || user?.role == 'team_member')
+                    if (userRole == 'admin' || userRole == 'manager' || userRole == 'team_member')
                       _drawerItem(Icons.assignment_outlined, 'Task Assigner', AppRoutes.tasksAssigner, scaffoldKey),
-                    if (user?.role == 'digital_creator' )
+                    if (userRole == 'digital_creator' )
                       _drawerItem(Icons.assignment_outlined, 'Task Submission', AppRoutes.tasksSubmission, scaffoldKey),
-
-                    if (user?.role == 'manager' || user?.role == 'team_member')
+                    if (userRole == 'admin' || userRole == 'manager' || userRole == 'team_member')
                       _drawerItem(Icons.assignment_outlined, 'Signature Assigner', AppRoutes.signatureAssigner, scaffoldKey),
-                    if (user?.role == 'digital_creator' )
+                    if (userRole == 'digital_creator' )
                       _drawerItem(Icons.assignment_outlined, 'Signature Signer', AppRoutes.signatureSigner, scaffoldKey),
 
-                    if (user?.role == 'manager' || user?.role == 'admin')
+                    if (userRole == 'admin' || userRole == 'manager')
                       _drawerItem(Icons.folder_open_outlined, 'Content Vault', AppRoutes.contentVault, scaffoldKey),
                     // _drawerItem(Icons.verified_user_outlined, 'Compliance', AppRoutes.compliance, scaffoldKey),
                     // _drawerItem(Icons.bar_chart_outlined, 'Reports', AppRoutes.reports, scaffoldKey),
