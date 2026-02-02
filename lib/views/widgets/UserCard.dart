@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import '../../helpers/ExportImports.dart';
 
 class UserCard extends StatelessWidget {
@@ -29,25 +30,25 @@ class UserCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
           children: [
-            _avatar(user.profilePictureUrl),
-            const SizedBox(width: 14),
-            Expanded(child: _content()),
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                modelAvatar(
+                imageUrl: user.profilePictureUrl,
+                  name: user.fullName, // or fullName / username
+                  radius: 26,
+                ),
+                const SizedBox(width: 14),
+                Expanded(child:  _nameAndRole(),),
+              ],
+            ),
+            _content()
+            // Expanded(child: _content()),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _avatar(String? url) {
-    return CircleAvatar(
-      radius: 28,
-      backgroundImage: url != null
-          ? NetworkImage(url)
-          : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
     );
   }
 
@@ -55,8 +56,7 @@ class UserCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _nameAndRole(),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         _managerRow(),
         const SizedBox(height: 10),
         _assignedModels(),
@@ -67,18 +67,18 @@ class UserCard extends StatelessWidget {
   }
 
   Widget _nameAndRole() {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            user.fullName,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-            overflow: TextOverflow.ellipsis,
+        Text(
+          user.fullName,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
+        const SizedBox(height: 5),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
@@ -86,7 +86,7 @@ class UserCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            user.role,
+            roleLabel(user.role),
             style: const TextStyle(
               color: Colors.blue,
               fontSize: 12,
@@ -99,14 +99,14 @@ class UserCard extends StatelessWidget {
   }
 
   Widget _managerRow() {
-    if (user.manager == null) return const SizedBox.shrink();
+    // if (user.manager == null) return const SizedBox.shrink();
     return RichText(
       text: TextSpan(
         text: 'Manager: ',
         style: const TextStyle(color: Colors.grey, fontSize: 13),
         children: [
           TextSpan(
-            text: user.manager!.fullName,
+            text: user.manager == null ? '---' : user.manager!.fullName,
             style: const TextStyle(
               color: Colors.black87,
               fontWeight: FontWeight.w600,
@@ -118,7 +118,8 @@ class UserCard extends StatelessWidget {
   }
 
   Widget _assignedModels() {
-    if (user.modelsUnderManager.isEmpty) return const SizedBox.shrink();
+    // if (user.modelsUnderManager.isEmpty) return const SizedBox.shrink();
+    // if(user.role != 'manager' && user.role != 'team_member') return const SizedBox.shrink();
 
     // Limit avatars to 2, show count if more
     final displayModels = user.modelsUnderManager.take(2).toList();
@@ -137,54 +138,57 @@ class UserCard extends StatelessWidget {
             'Assigned Models',
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
-          SizedBox(
-            width: 70,
-            height: 26,
-            child: Stack(
-              children: [
-                for (int i = 0; i < displayModels.length; i++)
-                  Positioned(
-                    left: i * 18.0,
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundImage: displayModels[i].profilePictureUrl != null
-                          ? NetworkImage(displayModels[i].profilePictureUrl!)
-                          : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+          if (!user.modelsUnderManager.isEmpty)
+            SizedBox(
+              width: 70,
+              height: 26,
+              child: Stack(
+                children: [
+                  for (int i = 0; i < displayModels.length; i++)
+                    Positioned(
+                      left: i * 18.0,
+                      child: modelAvatar(
+                        imageUrl: displayModels[i].profilePictureUrl,
+                        name: displayModels[i].fullName, // or fullName / username
+                        radius: 12,
+                      ),
                     ),
-                  ),
-                if (extraCount > 0)
-                  Positioned(
-                    left: displayModels.length * 18.0,
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: Colors.amber,
-                      child: Text(
-                        '$extraCount+',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                  if (extraCount > 0)
+                    Positioned(
+                      left: displayModels.length * 18.0,
+                      child: CircleAvatar(
+                        radius: 12,
+                        backgroundColor: Colors.amber,
+                        child: Text(
+                          '$extraCount+',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
+          if (user.modelsUnderManager.isEmpty)
+            const Text(
+              '---',
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
         ],
       ),
     );
   }
 
   Widget _dateRow() {
-    final lastLogin = user.lastLogin ?? user.createdAt;
-    final formattedDate = "${lastLogin.day.toString().padLeft(2, '0')}-"
-        "${lastLogin.month.toString().padLeft(2, '0')} "
-        "${lastLogin.hour.toString().padLeft(2, '0')}:"
-        "${lastLogin.minute.toString().padLeft(2, '0')}";
+    final createdAt = user.createdAt;
+
     return Text(
-      formattedDate,
+      formattedDate(createdAt),
       style: const TextStyle(color: Colors.grey, fontSize: 12),
     );
   }
+
 }

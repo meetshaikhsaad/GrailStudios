@@ -108,6 +108,7 @@ class UsersRolesScreen extends StatelessWidget {
         scaffoldKey: scaffoldKey
       ),
       drawer: AppBarWidget.appDrawer(scaffoldKey),
+      backgroundColor: screensBackground,
 
       floatingActionButton: FutureBuilder<String>(
           future: _getLoggedInUserRole(), // method to read from SharedPreferences
@@ -317,7 +318,6 @@ class UsersRolesScreen extends StatelessWidget {
                   return UserCard(
                     user: user,
                     onTap: () {
-                      print("userid: " + user.id.toString());
                       Get.toNamed(
                         AppRoutes.userDetail,
                         arguments: {
@@ -351,7 +351,7 @@ class UsersRolesScreen extends StatelessWidget {
         label: Text(label, style: TextStyle(fontWeight: FontWeight.w600)),
         selected: isSelected,
         selectedColor: grailGold,
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.grey[300],
         labelStyle: TextStyle(
           color: isSelected ? Colors.white : Colors.black87,
         ),
@@ -359,6 +359,7 @@ class UsersRolesScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
           side: BorderSide.none,
         ),
+        side: BorderSide.none,
         onSelected: (_) => onTap(),
       ),
     );

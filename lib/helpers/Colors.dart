@@ -40,3 +40,7 @@ const Color grailInputBorder = Color(0xFFE0D0B8); // Subtle border
 // for snackbar consistency
 const Color grailErrorRed = Color(0xFFE74C3C); // For error snackbars
 const Color grailSuccessGreen = Color(0xFF2ECC71); // For success snackbars
+
+// for UI consistency
+const Color screensBackground = Color(0xFFFAFAFA); // Light background for cards
+const Color screensCardsBackground = Color(0xffFFFFFF); // Light background for cards

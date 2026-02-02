@@ -41,11 +41,10 @@ class UserDetailScreen extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      CircleAvatar(
+                      modelAvatar(
+                        imageUrl: user.profilePictureUrl,
+                        name: user.fullName, // or fullName / username
                         radius: 60,
-                        backgroundImage: user.profilePictureUrl != null && user.profilePictureUrl!.isNotEmpty
-                            ? NetworkImage(user.profilePictureUrl!)
-                            : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                       ),
                       Obx(() => controller.isUploadingImage.value
                           ? Container(
@@ -236,6 +235,7 @@ class UserDetailScreen extends StatelessWidget {
     );
   }
 
+
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
@@ -275,4 +275,5 @@ class UserDetailScreen extends StatelessWidget {
       ),
     );
   }
+
 }

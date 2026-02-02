@@ -160,4 +160,25 @@ class _ContentVaultViewerScreenState extends State<ContentVaultViewerScreen> {
       ),
     );
   }
+
+  //call this function for adding downloading the attachment functionality
+  Future<void> _downloadAttachment(String url, {BuildContext? context}) async {
+    try {
+      final fileName = url.split('/').last;
+
+      // Use the DownloadService
+      await DownloadService.instance.downloadFile(
+        url,
+        fileName,
+        context: context,
+      );
+    } catch (e) {
+      if (context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Download failed: $e")),
+        );
+      }
+      print("Download failed: $e");
+    }
+  }
 }

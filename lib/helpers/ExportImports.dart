@@ -15,7 +15,8 @@ export 'package:shared_preferences/shared_preferences.dart';
 export 'package:grailstudios/helpers/Colors.dart';
 export 'package:grailstudios/helpers/AppConstants.dart';
 export 'package:grailstudios/helpers/AppRoutes.dart';
-// export 'package:solarease/helpers/Constants.dart';
+export 'package:grailstudios/helpers/GlobalFunctions.dart';
+
 
 //Services
 export 'package:grailstudios/services/ApiService.dart';
