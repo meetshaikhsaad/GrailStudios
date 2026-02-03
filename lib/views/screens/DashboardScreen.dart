@@ -95,16 +95,16 @@ class DashboardScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildStatCard('Overdue Tasks', metrics.overdue.toString(), Colors.red),
-            _buildStatCard('Missing Content', metrics.missing.toString(), Colors.orange),
+            _buildStatCard('Overdue Tasks', metrics.overdue.toString(), grailGold),
+            _buildStatCard('Missing Content', metrics.missing.toString(), grailGold),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildStatCard('Unsigned Docs', metrics.unsigned.toString(), Colors.blueAccent),
-            _buildStatCard('Blocked Tasks', metrics.blocked.toString(), Colors.grey),
+            _buildStatCard('Unsigned Docs', metrics.unsigned.toString(), grailGold),
+            _buildStatCard('Blocked Tasks', metrics.blocked.toString(), grailGold),
           ],
         ),
       ],
@@ -154,7 +154,7 @@ class DashboardScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Task Completion',
+          'Task Completion Rate',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
@@ -177,7 +177,7 @@ class DashboardScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Overall Rate'),
+                  const Text('Overall Performance'),
                   Text(
                     '${completion.overallRate}%',
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -204,30 +204,86 @@ class DashboardScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Missing Content',
+          'Action Required: Missing Content',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
+
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
             ],
           ),
           child: ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
-            separatorBuilder: (_, __) => const Divider(height: 1, color: separators),
+            separatorBuilder: (_, __) =>
+            const Divider(height: 1, color: separators),
             itemBuilder: (context, index) {
               final item = items[index];
-              return ListTile(
-                title: Text(item.name),
-                trailing: Text(
-                  'missing items - ${item.count}',
-                  style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+
+              return InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  // TODO: Add routing here
+                  // Example:
+                  // Get.to(() => MissingContentDetailsScreen(user: item));
+                },
+                child: Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Row(
+                    children: [
+                      /// LEFT SIDE (Name + Missing Count)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.name,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            RichText(
+                              text: TextSpan(
+                                text: 'missing items - ',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.red,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: item.count.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      // fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// RIGHT ARROW
+                      const Icon(
+                        Icons.chevron_right,
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -246,37 +302,74 @@ class DashboardScreen extends StatelessWidget {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
+
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
             ],
           ),
           child: ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: documents.length,
-            separatorBuilder: (_, __) => const Divider(height: 1, color: separators,),
+            separatorBuilder: (_, __) =>
+            const Divider(height: 1, color: separators),
             itemBuilder: (context, index) {
               final doc = documents[index];
-              return ListTile(
-                title: Text(doc.userName),
-                subtitle: Text(doc.docName),
-                trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: doc.statusColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    doc.status,
-                    style: TextStyle(
-                      color: doc.statusColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                    ),
+
+              return InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  // TODO: Add navigation
+                  // Get.to(() => DocumentDetailsScreen(doc: doc));
+                },
+                child: Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Row(
+                    children: [
+                      /// LEFT SIDE (User + Document)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              doc.userName,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              doc.docName,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// STATUS BADGE
+                      _buildStatusBadge(doc),
+
+                      const SizedBox(width: 10),
+
+                      /// RIGHT ARROW
+                      const Icon(
+                        Icons.chevron_right,
+                        color: Colors.grey,
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -284,6 +377,27 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildStatusBadge(DocumentItem doc) {
+    final Color textColor = doc.statusColor;
+    final Color bgColor = textColor.withOpacity(0.12);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        doc.status,
+        style: TextStyle(
+          color: textColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 
