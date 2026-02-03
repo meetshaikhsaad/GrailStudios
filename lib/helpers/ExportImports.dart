@@ -41,6 +41,7 @@ export 'package:grailstudios/models/TaskAssignee.dart';
 export 'package:grailstudios/models/ChatMessages.dart';
 export 'package:grailstudios/models/Signature.dart';
 export 'package:grailstudios/models/ContentVaultFile.dart';
+export 'package:grailstudios/models/DashboardStats.dart';
 
 //controller
 export 'package:grailstudios/controllers/LoginController.dart';
@@ -58,6 +59,7 @@ export 'package:grailstudios/controllers/SignatureAssignerController.dart';
 export 'package:grailstudios/controllers/SignatureCrudController.dart';
 export 'package:grailstudios/controllers/ContentVaultController.dart';
 export 'package:grailstudios/controllers/ContentVaultDetailsController.dart';
+export 'package:grailstudios/controllers/DashboardController.dart';
 
 
 //Screens

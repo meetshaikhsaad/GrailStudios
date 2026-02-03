@@ -44,3 +44,4 @@ const Color grailSuccessGreen = Color(0xFF2ECC71); // For success snackbars
 // for UI consistency
 const Color screensBackground = Color(0xFFFAFAFA); // Light background for cards
 const Color screensCardsBackground = Color(0xffFFFFFF); // Light background for cards
+const Color separators = Color(0xFFBDBDBD); // Light background for cards
