@@ -223,18 +223,56 @@ class AppBarWidget {
 
   // Reusable Bottom Navigation Bar
   static Widget appBottomNav(int currentIndex, ValueChanged<int> onTap) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: grailGold,
-      unselectedItemColor: Colors.grey,
-      currentIndex: currentIndex,
-      onTap: onTap,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined), activeIcon: Icon(Icons.assignment), label: 'Tasks'),
-        BottomNavigationBarItem(icon: Icon(Icons.folder_open_outlined), activeIcon: Icon(Icons.folder_open), label: 'Content'),
-        BottomNavigationBarItem(icon: Icon(Icons.verified_user_outlined), activeIcon: Icon(Icons.verified_user), label: 'Compliance'),
-      ],
+    return FutureBuilder<ActiveUser?>(
+      future: ApiService.getSavedUser(),
+      builder: (context, snapshot) {
+        final role = snapshot.data?.user.role ?? '';
+
+        final items = <BottomNavigationBarItem>[
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.assignment_outlined),
+            activeIcon: Icon(Icons.assignment),
+            label: 'Tasks',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.draw_outlined),
+            activeIcon: Icon(Icons.draw),
+            label: 'Signatures',
+          ),
+        ];
+
+        // Admin & Manager → Content
+        if (role == 'admin' || role == 'manager') {
+          items.add(const BottomNavigationBarItem(
+            icon: Icon(Icons.folder_open_outlined),
+            activeIcon: Icon(Icons.folder_open),
+            label: 'Content',
+          ));
+        }
+
+        // Team Member & Digital Creator → Announcements
+        if (role == 'team_member' || role == 'digital_creator') {
+          items.add(const BottomNavigationBarItem(
+            icon: Icon(Icons.campaign_outlined),
+            activeIcon: Icon(Icons.campaign),
+            label: 'Announcements',
+          ));
+        }
+
+        return BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: grailGold,
+          unselectedItemColor: Colors.grey,
+          currentIndex: currentIndex.clamp(0, items.length - 1),
+          onTap: onTap,
+          items: items,
+        );
+      },
     );
   }
 

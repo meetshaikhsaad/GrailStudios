@@ -74,16 +74,53 @@ class DashboardScreen extends StatelessWidget {
                 // Time to Completion
                 _buildTimeToCompletion(stats.time),
 
-                const SizedBox(height: 80), // bottom padding
+                const SizedBox(height: 5), // bottom padding
               ],
             ),
           ),
         );
       }),
       bottomNavigationBar: AppBarWidget.appBottomNav(
-        0, // current index = Home
-            (index) {
-          // handle navigation
+        0,
+            (index) async {
+          final activeUser = await ApiService.getSavedUser();
+          final role = activeUser?.user.role;
+
+          switch (index) {
+          /// 🏠 HOME → Dashboard (Everyone)
+            case 0:
+              if (Get.currentRoute != AppRoutes.dashboard) {
+                Get.offAllNamed(AppRoutes.dashboard);
+              }
+              break;
+
+          /// 📋 TASKS
+            case 1:
+              if (role == 'admin' || role == 'manager' || role == 'team_member') {
+                Get.offAllNamed(AppRoutes.tasksAssigner);
+              } else if (role == 'digital_creator') {
+                Get.offAllNamed(AppRoutes.tasksSubmission);
+              }
+              break;
+
+          /// ✔ COMPLIANCE (Signatures)
+            case 2:
+              if (role == 'admin' || role == 'manager' || role == 'team_member') {
+                Get.offAllNamed(AppRoutes.signatureAssigner);
+              } else if (role == 'digital_creator') {
+                Get.offAllNamed(AppRoutes.signatureSigner);
+              }
+              break;
+
+          /// 📂 CONTENT (Only Admin & Manager)
+            case 3:
+              if (role == 'admin' || role == 'manager') {
+                Get.offAllNamed(AppRoutes.contentVault);
+              }else if (role == 'digital_creator' || role == 'team_member'){
+                // announcement routing for these
+              }
+              break;
+          }
         },
       ),
     );
