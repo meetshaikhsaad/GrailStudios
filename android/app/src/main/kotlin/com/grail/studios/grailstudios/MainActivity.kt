@@ -1,4 +1,4 @@
-package com.grail.studios.grailstudios
+package com.grail.studios
 
 import io.flutter.embedding.android.FlutterActivity
 import android.content.ContentValues
